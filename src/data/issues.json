@@ -1,0 +1,506 @@
+[
+  {
+    "id": "issue-001",
+    "title": "Restore keyboard focus after closing a dialog",
+    "code": "ATL-101",
+    "description": "Restore keyboard focus after closing a dialog. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "High",
+    "owner": "Jordan Patel",
+    "projectId": "project-01",
+    "updatedAt": "2026-11-12",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-002",
+    "title": "Invite emails arrive without a workspace name",
+    "code": "CPT-102",
+    "description": "Invite emails arrive without a workspace name. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In progress",
+    "priority": "Medium",
+    "owner": "Sophie Martin",
+    "projectId": "project-02",
+    "updatedAt": "2026-11-11",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-003",
+    "title": "Add pagination to the activity feed",
+    "code": "DSN-103",
+    "description": "Add pagination to the activity feed. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In review",
+    "priority": "Low",
+    "owner": "Ethan Brooks",
+    "projectId": "project-03",
+    "updatedAt": "2026-11-10",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-004",
+    "title": "Fix sidebar overflow on small screens",
+    "code": "MOB-104",
+    "description": "Fix sidebar overflow on small screens. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Medium",
+    "owner": "Olivia Kim",
+    "projectId": "project-04",
+    "updatedAt": "2026-11-09",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-005",
+    "title": "Document component color tokens",
+    "code": "ANL-105",
+    "description": "Document component color tokens. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Resolved",
+    "priority": "High",
+    "owner": "Maya Chen",
+    "projectId": "project-05",
+    "updatedAt": "2026-11-08",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-006",
+    "title": "Persist notification preferences",
+    "code": "DEV-106",
+    "description": "Persist notification preferences. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Urgent",
+    "owner": "Alex Rivera",
+    "projectId": "project-06",
+    "updatedAt": "2026-11-07",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-007",
+    "title": "Retry failed event deliveries with backoff",
+    "code": "KNW-107",
+    "description": "Retry failed event deliveries with backoff. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "High",
+    "owner": "Jordan Patel",
+    "projectId": "project-07",
+    "updatedAt": "2026-11-06",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-008",
+    "title": "Reduce cold-start time for local development",
+    "code": "SEC-108",
+    "description": "Reduce cold-start time for local development. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In progress",
+    "priority": "Medium",
+    "owner": "Sophie Martin",
+    "projectId": "project-08",
+    "updatedAt": "2026-11-05",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-009",
+    "title": "Index document titles and author names",
+    "code": "API-109",
+    "description": "Index document titles and author names. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In review",
+    "priority": "Low",
+    "owner": "Ethan Brooks",
+    "projectId": "project-09",
+    "updatedAt": "2026-11-04",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-010",
+    "title": "Expire revoked sessions immediately",
+    "code": "WEB-110",
+    "description": "Expire revoked sessions immediately. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Medium",
+    "owner": "Olivia Kim",
+    "projectId": "project-10",
+    "updatedAt": "2026-11-03",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-011",
+    "title": "Return consistent validation errors from API",
+    "code": "SRC-111",
+    "description": "Return consistent validation errors from API. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Resolved",
+    "priority": "High",
+    "owner": "Maya Chen",
+    "projectId": "project-11",
+    "updatedAt": "2026-11-12",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-012",
+    "title": "Repair pricing page links in the footer",
+    "code": "BIL-112",
+    "description": "Repair pricing page links in the footer. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Urgent",
+    "owner": "Alex Rivera",
+    "projectId": "project-12",
+    "updatedAt": "2026-11-11",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-013",
+    "title": "Add locale-aware date formatting",
+    "code": "ATL-113",
+    "description": "Add locale-aware date formatting. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "High",
+    "owner": "Jordan Patel",
+    "projectId": "project-01",
+    "updatedAt": "2026-11-10",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-014",
+    "title": "Show a helpful empty state for new accounts",
+    "code": "CPT-114",
+    "description": "Show a helpful empty state for new accounts. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In progress",
+    "priority": "Medium",
+    "owner": "Sophie Martin",
+    "projectId": "project-02",
+    "updatedAt": "2026-11-09",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-015",
+    "title": "Improve contrast of disabled input labels",
+    "code": "DSN-115",
+    "description": "Improve contrast of disabled input labels. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In review",
+    "priority": "Low",
+    "owner": "Ethan Brooks",
+    "projectId": "project-03",
+    "updatedAt": "2026-11-08",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-016",
+    "title": "Support offline drafts on mobile",
+    "code": "MOB-116",
+    "description": "Support offline drafts on mobile. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Medium",
+    "owner": "Olivia Kim",
+    "projectId": "project-04",
+    "updatedAt": "2026-11-07",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-017",
+    "title": "Deduplicate page-view events",
+    "code": "ANL-117",
+    "description": "Deduplicate page-view events. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Resolved",
+    "priority": "High",
+    "owner": "Maya Chen",
+    "projectId": "project-05",
+    "updatedAt": "2026-11-06",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-018",
+    "title": "Cache package downloads in CI",
+    "code": "DEV-118",
+    "description": "Cache package downloads in CI. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Urgent",
+    "owner": "Alex Rivera",
+    "projectId": "project-06",
+    "updatedAt": "2026-11-05",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-019",
+    "title": "Add document version history",
+    "code": "KNW-119",
+    "description": "Add document version history. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "High",
+    "owner": "Jordan Patel",
+    "projectId": "project-07",
+    "updatedAt": "2026-11-04",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-020",
+    "title": "Include actor names in audit exports",
+    "code": "SEC-120",
+    "description": "Include actor names in audit exports. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In progress",
+    "priority": "Medium",
+    "owner": "Sophie Martin",
+    "projectId": "project-08",
+    "updatedAt": "2026-11-03",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-021",
+    "title": "Validate webhook signatures",
+    "code": "API-121",
+    "description": "Validate webhook signatures. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In review",
+    "priority": "Low",
+    "owner": "Ethan Brooks",
+    "projectId": "project-09",
+    "updatedAt": "2026-11-12",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-022",
+    "title": "Resolve image layout shift on case studies",
+    "code": "WEB-122",
+    "description": "Resolve image layout shift on case studies. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Medium",
+    "owner": "Olivia Kim",
+    "projectId": "project-10",
+    "updatedAt": "2026-11-11",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-023",
+    "title": "Rank exact title matches first",
+    "code": "SRC-123",
+    "description": "Rank exact title matches first. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Resolved",
+    "priority": "High",
+    "owner": "Maya Chen",
+    "projectId": "project-11",
+    "updatedAt": "2026-11-10",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-024",
+    "title": "Reconcile migrated subscription quantities",
+    "code": "BIL-124",
+    "description": "Reconcile migrated subscription quantities. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Urgent",
+    "owner": "Alex Rivera",
+    "projectId": "project-12",
+    "updatedAt": "2026-11-09",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-025",
+    "title": "Export project milestones as CSV",
+    "code": "ATL-125",
+    "description": "Export project milestones as CSV. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "High",
+    "owner": "Jordan Patel",
+    "projectId": "project-01",
+    "updatedAt": "2026-11-08",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-026",
+    "title": "Display invoice payment status",
+    "code": "CPT-126",
+    "description": "Display invoice payment status. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In progress",
+    "priority": "Medium",
+    "owner": "Sophie Martin",
+    "projectId": "project-02",
+    "updatedAt": "2026-11-07",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-027",
+    "title": "Announce list filtering results to screen readers",
+    "code": "DSN-127",
+    "description": "Announce list filtering results to screen readers. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In review",
+    "priority": "Low",
+    "owner": "Ethan Brooks",
+    "projectId": "project-03",
+    "updatedAt": "2026-11-06",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-028",
+    "title": "Add deep links to mobile issue notifications",
+    "code": "MOB-128",
+    "description": "Add deep links to mobile issue notifications. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Medium",
+    "owner": "Olivia Kim",
+    "projectId": "project-04",
+    "updatedAt": "2026-11-05",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-029",
+    "title": "Backfill missing analytics timestamps",
+    "code": "ANL-129",
+    "description": "Backfill missing analytics timestamps. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Resolved",
+    "priority": "High",
+    "owner": "Maya Chen",
+    "projectId": "project-05",
+    "updatedAt": "2026-11-04",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-030",
+    "title": "Surface actionable build failure summaries",
+    "code": "DEV-130",
+    "description": "Surface actionable build failure summaries. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Urgent",
+    "owner": "Alex Rivera",
+    "projectId": "project-06",
+    "updatedAt": "2026-11-03",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-031",
+    "title": "Allow document owners to archive drafts",
+    "code": "KNW-131",
+    "description": "Allow document owners to archive drafts. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "High",
+    "owner": "Jordan Patel",
+    "projectId": "project-07",
+    "updatedAt": "2026-11-12",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-032",
+    "title": "Add session device information",
+    "code": "SEC-132",
+    "description": "Add session device information. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In progress",
+    "priority": "Medium",
+    "owner": "Sophie Martin",
+    "projectId": "project-08",
+    "updatedAt": "2026-11-11",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-033",
+    "title": "Publish API rate-limit headers",
+    "code": "API-133",
+    "description": "Publish API rate-limit headers. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "In review",
+    "priority": "Low",
+    "owner": "Ethan Brooks",
+    "projectId": "project-09",
+    "updatedAt": "2026-11-10",
+    "tags": [
+      "Enhancement"
+    ]
+  },
+  {
+    "id": "issue-034",
+    "title": "Optimize homepage font loading",
+    "code": "WEB-134",
+    "description": "Optimize homepage font loading. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Medium",
+    "owner": "Olivia Kim",
+    "projectId": "project-10",
+    "updatedAt": "2026-11-09",
+    "tags": [
+      "Accessibility"
+    ]
+  },
+  {
+    "id": "issue-035",
+    "title": "Schedule incremental search reindexing",
+    "code": "SRC-135",
+    "description": "Schedule incremental search reindexing. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Resolved",
+    "priority": "High",
+    "owner": "Maya Chen",
+    "projectId": "project-11",
+    "updatedAt": "2026-11-08",
+    "tags": [
+      "Bug"
+    ]
+  },
+  {
+    "id": "issue-036",
+    "title": "Verify billing migration totals",
+    "code": "BIL-136",
+    "description": "Verify billing migration totals. Include regression coverage and confirm the behavior in the associated workspace before the next release.",
+    "status": "Open",
+    "priority": "Urgent",
+    "owner": "Alex Rivera",
+    "projectId": "project-12",
+    "updatedAt": "2026-11-07",
+    "tags": [
+      "Enhancement"
+    ]
+  }
+]

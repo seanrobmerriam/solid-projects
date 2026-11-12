@@ -1,0 +1,170 @@
+[
+  {
+    "id": "project-01",
+    "title": "Atlas platform",
+    "code": "ATL",
+    "description": "Unify customer workspaces, permissions, and account management.",
+    "status": "In progress",
+    "progress": 72,
+    "dueDate": "2026-12-04",
+    "owner": "Maya Chen",
+    "updatedAt": "2026-11-12",
+    "tags": [
+      "Product"
+    ]
+  },
+  {
+    "id": "project-02",
+    "title": "Customer portal",
+    "code": "CPT",
+    "description": "Give customers a self-service home for billing and support.",
+    "status": "In progress",
+    "progress": 48,
+    "dueDate": "2026-12-18",
+    "owner": "Alex Rivera",
+    "updatedAt": "2026-11-11",
+    "tags": [
+      "Engineering"
+    ]
+  },
+  {
+    "id": "project-03",
+    "title": "Design system",
+    "code": "DSN",
+    "description": "Ship accessible components and shared interaction guidelines.",
+    "status": "In review",
+    "progress": 91,
+    "dueDate": "2026-11-20",
+    "owner": "Jordan Patel",
+    "updatedAt": "2026-11-10",
+    "tags": [
+      "Product"
+    ]
+  },
+  {
+    "id": "project-04",
+    "title": "Mobile companion",
+    "code": "MOB",
+    "description": "Bring project updates and issue triage to iOS and Android.",
+    "status": "Planning",
+    "progress": 18,
+    "dueDate": "2027-01-22",
+    "owner": "Sophie Martin",
+    "updatedAt": "2026-11-09",
+    "tags": [
+      "Engineering"
+    ]
+  },
+  {
+    "id": "project-05",
+    "title": "Analytics pipeline",
+    "code": "ANL",
+    "description": "Deliver reliable product events and actionable reporting.",
+    "status": "In progress",
+    "progress": 63,
+    "dueDate": "2026-12-11",
+    "owner": "Ethan Brooks",
+    "updatedAt": "2026-11-08",
+    "tags": [
+      "Product"
+    ]
+  },
+  {
+    "id": "project-06",
+    "title": "Developer experience",
+    "code": "DEV",
+    "description": "Improve local setup, continuous integration, and release tooling.",
+    "status": "In progress",
+    "progress": 55,
+    "dueDate": "2026-12-03",
+    "owner": "Olivia Kim",
+    "updatedAt": "2026-11-07",
+    "tags": [
+      "Engineering"
+    ]
+  },
+  {
+    "id": "project-07",
+    "title": "Knowledge hub",
+    "code": "KNW",
+    "description": "Make team decisions, documents, and onboarding easier to find.",
+    "status": "Planning",
+    "progress": 24,
+    "dueDate": "2027-01-08",
+    "owner": "Maya Chen",
+    "updatedAt": "2026-11-06",
+    "tags": [
+      "Product"
+    ]
+  },
+  {
+    "id": "project-08",
+    "title": "Security foundations",
+    "code": "SEC",
+    "description": "Strengthen session management, audit trails, and access reviews.",
+    "status": "In review",
+    "progress": 86,
+    "dueDate": "2026-11-27",
+    "owner": "Alex Rivera",
+    "updatedAt": "2026-11-05",
+    "tags": [
+      "Engineering"
+    ]
+  },
+  {
+    "id": "project-09",
+    "title": "Public API v2",
+    "code": "API",
+    "description": "Publish a consistent API with webhooks and clear documentation.",
+    "status": "In progress",
+    "progress": 39,
+    "dueDate": "2027-01-15",
+    "owner": "Jordan Patel",
+    "updatedAt": "2026-11-12",
+    "tags": [
+      "Product"
+    ]
+  },
+  {
+    "id": "project-10",
+    "title": "Website refresh",
+    "code": "WEB",
+    "description": "Refresh product pages, pricing, and customer stories.",
+    "status": "Completed",
+    "progress": 100,
+    "dueDate": "2026-11-06",
+    "owner": "Sophie Martin",
+    "updatedAt": "2026-11-11",
+    "tags": [
+      "Engineering"
+    ]
+  },
+  {
+    "id": "project-11",
+    "title": "Search infrastructure",
+    "code": "SRC",
+    "description": "Improve relevance and indexing across workspace content.",
+    "status": "Planning",
+    "progress": 12,
+    "dueDate": "2027-02-05",
+    "owner": "Ethan Brooks",
+    "updatedAt": "2026-11-10",
+    "tags": [
+      "Product"
+    ]
+  },
+  {
+    "id": "project-12",
+    "title": "Billing migration",
+    "code": "BIL",
+    "description": "Move existing subscriptions to a consolidated billing workflow.",
+    "status": "On hold",
+    "progress": 34,
+    "dueDate": "2027-01-29",
+    "owner": "Olivia Kim",
+    "updatedAt": "2026-11-09",
+    "tags": [
+      "Engineering"
+    ]
+  }
+]

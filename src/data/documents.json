@@ -1,0 +1,852 @@
+[
+  {
+    "id": "document-001",
+    "title": "Platform architecture overview",
+    "description": "Architecture reference for Atlas platform: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Alex Rivera",
+    "projectId": "project-01",
+    "updatedAt": "2026-11-12",
+    "createdAt": "2026-09-01",
+    "fileType": "PDF",
+    "size": 18432,
+    "version": "1.0",
+    "tags": [
+      "Architecture",
+      "ATL"
+    ]
+  },
+  {
+    "id": "document-002",
+    "title": "Customer portal product brief",
+    "description": "Product reference for Customer portal: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Jordan Patel",
+    "projectId": "project-02",
+    "updatedAt": "2026-11-11",
+    "createdAt": "2026-10-02",
+    "fileType": "DOCX",
+    "size": 158720,
+    "version": "2.1",
+    "tags": [
+      "Product",
+      "CPT"
+    ]
+  },
+  {
+    "id": "document-003",
+    "title": "Component accessibility checklist",
+    "description": "Design reference for Design system: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Sophie Martin",
+    "projectId": "project-03",
+    "updatedAt": "2026-11-10",
+    "createdAt": "2026-09-03",
+    "fileType": "MD",
+    "size": 299008,
+    "version": "3.2",
+    "tags": [
+      "Design",
+      "DSN"
+    ]
+  },
+  {
+    "id": "document-004",
+    "title": "Mobile navigation research",
+    "description": "Research reference for Mobile companion: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Ethan Brooks",
+    "projectId": "project-04",
+    "updatedAt": "2026-11-09",
+    "createdAt": "2026-10-04",
+    "fileType": "PDF",
+    "size": 439296,
+    "version": "1.3",
+    "tags": [
+      "Research",
+      "MOB"
+    ]
+  },
+  {
+    "id": "document-005",
+    "title": "Analytics event taxonomy",
+    "description": "Data reference for Analytics pipeline: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Olivia Kim",
+    "projectId": "project-05",
+    "updatedAt": "2026-11-08",
+    "createdAt": "2026-09-05",
+    "fileType": "XLSX",
+    "size": 579584,
+    "version": "2.0",
+    "tags": [
+      "Data",
+      "ANL"
+    ]
+  },
+  {
+    "id": "document-006",
+    "title": "Local development handbook",
+    "description": "Engineering reference for Developer experience: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Maya Chen",
+    "projectId": "project-06",
+    "updatedAt": "2026-11-07",
+    "createdAt": "2026-10-06",
+    "fileType": "MD",
+    "size": 719872,
+    "version": "3.1",
+    "tags": [
+      "Engineering",
+      "DEV"
+    ]
+  },
+  {
+    "id": "document-007",
+    "title": "New teammate onboarding guide",
+    "description": "Operations reference for Knowledge hub: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Alex Rivera",
+    "projectId": "project-07",
+    "updatedAt": "2026-11-06",
+    "createdAt": "2026-09-07",
+    "fileType": "DOCX",
+    "size": 860160,
+    "version": "1.2",
+    "tags": [
+      "Operations",
+      "KNW"
+    ]
+  },
+  {
+    "id": "document-008",
+    "title": "Quarterly access review",
+    "description": "Security reference for Security foundations: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Jordan Patel",
+    "projectId": "project-08",
+    "updatedAt": "2026-11-05",
+    "createdAt": "2026-10-08",
+    "fileType": "XLSX",
+    "size": 1000448,
+    "version": "2.3",
+    "tags": [
+      "Security",
+      "SEC"
+    ]
+  },
+  {
+    "id": "document-009",
+    "title": "API versioning strategy",
+    "description": "Engineering reference for Public API v2: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Sophie Martin",
+    "projectId": "project-09",
+    "updatedAt": "2026-11-04",
+    "createdAt": "2026-09-09",
+    "fileType": "MD",
+    "size": 1140736,
+    "version": "3.0",
+    "tags": [
+      "Engineering",
+      "API"
+    ]
+  },
+  {
+    "id": "document-010",
+    "title": "Website launch retrospective",
+    "description": "Product reference for Website refresh: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Ethan Brooks",
+    "projectId": "project-10",
+    "updatedAt": "2026-11-03",
+    "createdAt": "2026-10-10",
+    "fileType": "PDF",
+    "size": 1281024,
+    "version": "1.1",
+    "tags": [
+      "Product",
+      "WEB"
+    ]
+  },
+  {
+    "id": "document-011",
+    "title": "Search relevance evaluation",
+    "description": "Research reference for Search infrastructure: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Olivia Kim",
+    "projectId": "project-11",
+    "updatedAt": "2026-11-02",
+    "createdAt": "2026-09-11",
+    "fileType": "XLSX",
+    "size": 1421312,
+    "version": "2.2",
+    "tags": [
+      "Research",
+      "SRC"
+    ]
+  },
+  {
+    "id": "document-012",
+    "title": "Billing migration runbook",
+    "description": "Engineering reference for Billing migration: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Maya Chen",
+    "projectId": "project-12",
+    "updatedAt": "2026-11-01",
+    "createdAt": "2026-10-12",
+    "fileType": "MD",
+    "size": 1561600,
+    "version": "3.3",
+    "tags": [
+      "Engineering",
+      "BIL"
+    ]
+  },
+  {
+    "id": "document-013",
+    "title": "Workspace permissions specification",
+    "description": "Product reference for Atlas platform: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Alex Rivera",
+    "projectId": "project-01",
+    "updatedAt": "2026-11-12",
+    "createdAt": "2026-09-13",
+    "fileType": "DOCX",
+    "size": 1701888,
+    "version": "1.0",
+    "tags": [
+      "Product",
+      "ATL"
+    ]
+  },
+  {
+    "id": "document-014",
+    "title": "Customer interview synthesis",
+    "description": "Research reference for Customer portal: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Jordan Patel",
+    "projectId": "project-02",
+    "updatedAt": "2026-11-11",
+    "createdAt": "2026-10-14",
+    "fileType": "PDF",
+    "size": 1842176,
+    "version": "2.1",
+    "tags": [
+      "Research",
+      "CPT"
+    ]
+  },
+  {
+    "id": "document-015",
+    "title": "Design token reference",
+    "description": "Design reference for Design system: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Sophie Martin",
+    "projectId": "project-03",
+    "updatedAt": "2026-11-10",
+    "createdAt": "2026-09-15",
+    "fileType": "JSON",
+    "size": 1982464,
+    "version": "3.2",
+    "tags": [
+      "Design",
+      "DSN"
+    ]
+  },
+  {
+    "id": "document-016",
+    "title": "Mobile release checklist",
+    "description": "Engineering reference for Mobile companion: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Ethan Brooks",
+    "projectId": "project-04",
+    "updatedAt": "2026-11-09",
+    "createdAt": "2026-10-16",
+    "fileType": "MD",
+    "size": 2122752,
+    "version": "1.3",
+    "tags": [
+      "Engineering",
+      "MOB"
+    ]
+  },
+  {
+    "id": "document-017",
+    "title": "Data retention policy",
+    "description": "Security reference for Analytics pipeline: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Olivia Kim",
+    "projectId": "project-05",
+    "updatedAt": "2026-11-08",
+    "createdAt": "2026-09-17",
+    "fileType": "PDF",
+    "size": 112640,
+    "version": "2.0",
+    "tags": [
+      "Security",
+      "ANL"
+    ]
+  },
+  {
+    "id": "document-018",
+    "title": "Continuous integration architecture",
+    "description": "Architecture reference for Developer experience: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Maya Chen",
+    "projectId": "project-06",
+    "updatedAt": "2026-11-07",
+    "createdAt": "2026-10-18",
+    "fileType": "PDF",
+    "size": 252928,
+    "version": "3.1",
+    "tags": [
+      "Architecture",
+      "DEV"
+    ]
+  },
+  {
+    "id": "document-019",
+    "title": "Knowledge hub content inventory",
+    "description": "Operations reference for Knowledge hub: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Alex Rivera",
+    "projectId": "project-07",
+    "updatedAt": "2026-11-06",
+    "createdAt": "2026-09-19",
+    "fileType": "XLSX",
+    "size": 393216,
+    "version": "1.2",
+    "tags": [
+      "Operations",
+      "KNW"
+    ]
+  },
+  {
+    "id": "document-020",
+    "title": "Incident response playbook",
+    "description": "Security reference for Security foundations: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Jordan Patel",
+    "projectId": "project-08",
+    "updatedAt": "2026-11-05",
+    "createdAt": "2026-10-20",
+    "fileType": "MD",
+    "size": 533504,
+    "version": "2.3",
+    "tags": [
+      "Security",
+      "SEC"
+    ]
+  },
+  {
+    "id": "document-021",
+    "title": "Webhook integration guide",
+    "description": "Engineering reference for Public API v2: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Sophie Martin",
+    "projectId": "project-09",
+    "updatedAt": "2026-11-04",
+    "createdAt": "2026-09-21",
+    "fileType": "MD",
+    "size": 673792,
+    "version": "3.0",
+    "tags": [
+      "Engineering",
+      "API"
+    ]
+  },
+  {
+    "id": "document-022",
+    "title": "Brand voice guidelines",
+    "description": "Design reference for Website refresh: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Ethan Brooks",
+    "projectId": "project-10",
+    "updatedAt": "2026-11-03",
+    "createdAt": "2026-10-22",
+    "fileType": "PDF",
+    "size": 814080,
+    "version": "1.1",
+    "tags": [
+      "Design",
+      "WEB"
+    ]
+  },
+  {
+    "id": "document-023",
+    "title": "Search index schema",
+    "description": "Architecture reference for Search infrastructure: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Olivia Kim",
+    "projectId": "project-11",
+    "updatedAt": "2026-11-02",
+    "createdAt": "2026-09-23",
+    "fileType": "JSON",
+    "size": 954368,
+    "version": "2.2",
+    "tags": [
+      "Architecture",
+      "SRC"
+    ]
+  },
+  {
+    "id": "document-024",
+    "title": "Subscription migration mapping",
+    "description": "Data reference for Billing migration: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Maya Chen",
+    "projectId": "project-12",
+    "updatedAt": "2026-11-01",
+    "createdAt": "2026-10-24",
+    "fileType": "XLSX",
+    "size": 1094656,
+    "version": "3.3",
+    "tags": [
+      "Data",
+      "BIL"
+    ]
+  },
+  {
+    "id": "document-025",
+    "title": "Account provisioning workflow",
+    "description": "Product reference for Atlas platform: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Alex Rivera",
+    "projectId": "project-01",
+    "updatedAt": "2026-11-12",
+    "createdAt": "2026-09-25",
+    "fileType": "DOCX",
+    "size": 1234944,
+    "version": "1.0",
+    "tags": [
+      "Product",
+      "ATL"
+    ]
+  },
+  {
+    "id": "document-026",
+    "title": "Self-service billing wireframes",
+    "description": "Design reference for Customer portal: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Jordan Patel",
+    "projectId": "project-02",
+    "updatedAt": "2026-11-11",
+    "createdAt": "2026-10-26",
+    "fileType": "PDF",
+    "size": 1375232,
+    "version": "2.1",
+    "tags": [
+      "Design",
+      "CPT"
+    ]
+  },
+  {
+    "id": "document-027",
+    "title": "Listbox interaction guidelines",
+    "description": "Design reference for Design system: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Sophie Martin",
+    "projectId": "project-03",
+    "updatedAt": "2026-11-10",
+    "createdAt": "2026-09-27",
+    "fileType": "MD",
+    "size": 1515520,
+    "version": "3.2",
+    "tags": [
+      "Design",
+      "DSN"
+    ]
+  },
+  {
+    "id": "document-028",
+    "title": "Push notification requirements",
+    "description": "Product reference for Mobile companion: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Ethan Brooks",
+    "projectId": "project-04",
+    "updatedAt": "2026-11-09",
+    "createdAt": "2026-10-01",
+    "fileType": "DOCX",
+    "size": 1655808,
+    "version": "1.3",
+    "tags": [
+      "Product",
+      "MOB"
+    ]
+  },
+  {
+    "id": "document-029",
+    "title": "Product metrics dictionary",
+    "description": "Data reference for Analytics pipeline: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Olivia Kim",
+    "projectId": "project-05",
+    "updatedAt": "2026-11-08",
+    "createdAt": "2026-09-02",
+    "fileType": "XLSX",
+    "size": 1796096,
+    "version": "2.0",
+    "tags": [
+      "Data",
+      "ANL"
+    ]
+  },
+  {
+    "id": "document-030",
+    "title": "Release automation proposal",
+    "description": "Engineering reference for Developer experience: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Maya Chen",
+    "projectId": "project-06",
+    "updatedAt": "2026-11-07",
+    "createdAt": "2026-10-03",
+    "fileType": "MD",
+    "size": 1936384,
+    "version": "3.1",
+    "tags": [
+      "Engineering",
+      "DEV"
+    ]
+  },
+  {
+    "id": "document-031",
+    "title": "Document lifecycle policy",
+    "description": "Operations reference for Knowledge hub: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Alex Rivera",
+    "projectId": "project-07",
+    "updatedAt": "2026-11-06",
+    "createdAt": "2026-09-04",
+    "fileType": "PDF",
+    "size": 2076672,
+    "version": "1.2",
+    "tags": [
+      "Operations",
+      "KNW"
+    ]
+  },
+  {
+    "id": "document-032",
+    "title": "Session security threat model",
+    "description": "Security reference for Security foundations: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Jordan Patel",
+    "projectId": "project-08",
+    "updatedAt": "2026-11-05",
+    "createdAt": "2026-10-05",
+    "fileType": "PDF",
+    "size": 66560,
+    "version": "2.3",
+    "tags": [
+      "Security",
+      "SEC"
+    ]
+  },
+  {
+    "id": "document-033",
+    "title": "Public API architecture decisions",
+    "description": "Architecture reference for Public API v2: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Sophie Martin",
+    "projectId": "project-09",
+    "updatedAt": "2026-11-04",
+    "createdAt": "2026-09-06",
+    "fileType": "MD",
+    "size": 206848,
+    "version": "3.0",
+    "tags": [
+      "Architecture",
+      "API"
+    ]
+  },
+  {
+    "id": "document-034",
+    "title": "Content publishing checklist",
+    "description": "Operations reference for Website refresh: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Ethan Brooks",
+    "projectId": "project-10",
+    "updatedAt": "2026-11-03",
+    "createdAt": "2026-10-07",
+    "fileType": "MD",
+    "size": 347136,
+    "version": "1.1",
+    "tags": [
+      "Operations",
+      "WEB"
+    ]
+  },
+  {
+    "id": "document-035",
+    "title": "Query performance benchmarks",
+    "description": "Data reference for Search infrastructure: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Olivia Kim",
+    "projectId": "project-11",
+    "updatedAt": "2026-11-02",
+    "createdAt": "2026-09-08",
+    "fileType": "XLSX",
+    "size": 487424,
+    "version": "2.2",
+    "tags": [
+      "Data",
+      "SRC"
+    ]
+  },
+  {
+    "id": "document-036",
+    "title": "Billing reconciliation checklist",
+    "description": "Operations reference for Billing migration: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Maya Chen",
+    "projectId": "project-12",
+    "updatedAt": "2026-11-01",
+    "createdAt": "2026-10-09",
+    "fileType": "MD",
+    "size": 627712,
+    "version": "3.3",
+    "tags": [
+      "Operations",
+      "BIL"
+    ]
+  },
+  {
+    "id": "document-037",
+    "title": "Platform launch plan",
+    "description": "Product reference for Atlas platform: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Alex Rivera",
+    "projectId": "project-01",
+    "updatedAt": "2026-11-12",
+    "createdAt": "2026-09-10",
+    "fileType": "DOCX",
+    "size": 768000,
+    "version": "1.0",
+    "tags": [
+      "Product",
+      "ATL"
+    ]
+  },
+  {
+    "id": "document-038",
+    "title": "Support escalation process",
+    "description": "Operations reference for Customer portal: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Jordan Patel",
+    "projectId": "project-02",
+    "updatedAt": "2026-11-11",
+    "createdAt": "2026-10-11",
+    "fileType": "MD",
+    "size": 908288,
+    "version": "2.1",
+    "tags": [
+      "Operations",
+      "CPT"
+    ]
+  },
+  {
+    "id": "document-039",
+    "title": "Component contribution guide",
+    "description": "Design reference for Design system: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Sophie Martin",
+    "projectId": "project-03",
+    "updatedAt": "2026-11-10",
+    "createdAt": "2026-09-12",
+    "fileType": "MD",
+    "size": 1048576,
+    "version": "3.2",
+    "tags": [
+      "Design",
+      "DSN"
+    ]
+  },
+  {
+    "id": "document-040",
+    "title": "Mobile usability findings",
+    "description": "Research reference for Mobile companion: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Ethan Brooks",
+    "projectId": "project-04",
+    "updatedAt": "2026-11-09",
+    "createdAt": "2026-10-13",
+    "fileType": "PDF",
+    "size": 1188864,
+    "version": "1.3",
+    "tags": [
+      "Research",
+      "MOB"
+    ]
+  },
+  {
+    "id": "document-041",
+    "title": "Analytics quality dashboard specification",
+    "description": "Data reference for Analytics pipeline: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Olivia Kim",
+    "projectId": "project-05",
+    "updatedAt": "2026-11-08",
+    "createdAt": "2026-09-14",
+    "fileType": "DOCX",
+    "size": 1329152,
+    "version": "2.0",
+    "tags": [
+      "Data",
+      "ANL"
+    ]
+  },
+  {
+    "id": "document-042",
+    "title": "Developer tooling roadmap",
+    "description": "Engineering reference for Developer experience: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Maya Chen",
+    "projectId": "project-06",
+    "updatedAt": "2026-11-07",
+    "createdAt": "2026-10-15",
+    "fileType": "PDF",
+    "size": 1469440,
+    "version": "3.1",
+    "tags": [
+      "Engineering",
+      "DEV"
+    ]
+  },
+  {
+    "id": "document-043",
+    "title": "Information architecture research",
+    "description": "Research reference for Knowledge hub: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Alex Rivera",
+    "projectId": "project-07",
+    "updatedAt": "2026-11-06",
+    "createdAt": "2026-09-16",
+    "fileType": "PDF",
+    "size": 1609728,
+    "version": "1.2",
+    "tags": [
+      "Research",
+      "KNW"
+    ]
+  },
+  {
+    "id": "document-044",
+    "title": "Audit logging specification",
+    "description": "Security reference for Security foundations: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Jordan Patel",
+    "projectId": "project-08",
+    "updatedAt": "2026-11-05",
+    "createdAt": "2026-10-17",
+    "fileType": "DOCX",
+    "size": 1750016,
+    "version": "2.3",
+    "tags": [
+      "Security",
+      "SEC"
+    ]
+  },
+  {
+    "id": "document-045",
+    "title": "API client quick start",
+    "description": "Engineering reference for Public API v2: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Sophie Martin",
+    "projectId": "project-09",
+    "updatedAt": "2026-11-04",
+    "createdAt": "2026-09-18",
+    "fileType": "MD",
+    "size": 1890304,
+    "version": "3.0",
+    "tags": [
+      "Engineering",
+      "API"
+    ]
+  },
+  {
+    "id": "document-046",
+    "title": "Website performance budget",
+    "description": "Engineering reference for Website refresh: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Ethan Brooks",
+    "projectId": "project-10",
+    "updatedAt": "2026-11-03",
+    "createdAt": "2026-10-19",
+    "fileType": "XLSX",
+    "size": 2030592,
+    "version": "1.1",
+    "tags": [
+      "Engineering",
+      "WEB"
+    ]
+  },
+  {
+    "id": "document-047",
+    "title": "Search rollout plan",
+    "description": "Product reference for Search infrastructure: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Draft",
+    "owner": "Olivia Kim",
+    "projectId": "project-11",
+    "updatedAt": "2026-11-02",
+    "createdAt": "2026-09-20",
+    "fileType": "DOCX",
+    "size": 20480,
+    "version": "2.2",
+    "tags": [
+      "Product",
+      "SRC"
+    ]
+  },
+  {
+    "id": "document-048",
+    "title": "Migration stakeholder update",
+    "description": "Operations reference for Billing migration: agreed decisions, implementation context, and next steps for the team.",
+    "status": "In review",
+    "owner": "Maya Chen",
+    "projectId": "project-12",
+    "updatedAt": "2026-11-01",
+    "createdAt": "2026-10-21",
+    "fileType": "PDF",
+    "size": 160768,
+    "version": "3.3",
+    "tags": [
+      "Operations",
+      "BIL"
+    ]
+  },
+  {
+    "id": "document-049",
+    "title": "Workspace architecture decision log",
+    "description": "Architecture reference for Atlas platform: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Alex Rivera",
+    "projectId": "project-01",
+    "updatedAt": "2026-11-12",
+    "createdAt": "2026-09-22",
+    "fileType": "MD",
+    "size": 301056,
+    "version": "1.0",
+    "tags": [
+      "Architecture",
+      "ATL"
+    ]
+  },
+  {
+    "id": "document-050",
+    "title": "Customer portal acceptance criteria",
+    "description": "Product reference for Customer portal: agreed decisions, implementation context, and next steps for the team.",
+    "status": "Published",
+    "owner": "Jordan Patel",
+    "projectId": "project-02",
+    "updatedAt": "2026-11-11",
+    "createdAt": "2026-10-23",
+    "fileType": "MD",
+    "size": 441344,
+    "version": "2.1",
+    "tags": [
+      "Product",
+      "CPT"
+    ]
+  }
+]

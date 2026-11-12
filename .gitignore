@@ -31,3 +31,6 @@ Thumbs.db
 .data/
 test-results/
 playwright-report/
+
+# Local planning documents
+/docs/

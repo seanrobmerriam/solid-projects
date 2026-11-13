@@ -4,7 +4,7 @@ This application uses Bun 1.4.3 for tooling and the production server. Dokploy b
 
 ## Release flow
 
-Pull requests and pushes to `main` run frozen installation, TypeScript checks, deployment-client tests, a production build, built-server health/SSR/route-protection checks, and the Chromium browser suite. Browser reports and failure traces are retained for seven days.
+Pull requests and pushes to `main` run frozen installation, TypeScript checks, deployment-client tests, a production build, built-server health/SSR/route-protection checks, and the Chromium browser suite against the built production server. Browser reports and failure traces are retained for seven days. Local browser tests use the development server unless `CI=true` is set; build first when using that flag.
 
 Once enabled, a successful `main` run advances `production` to the tested commit with a normal fast-forward push, calls Dokploy, waits for that run's uniquely named deployment to finish, and checks the public `/api/health` endpoint. Dokploy builds `production`, never a moving, potentially untested `main`. Deployment jobs are serialized; superseded main runs are skipped. Do not push to `production` yourself or enable another deployment trigger.
 

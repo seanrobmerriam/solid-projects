@@ -9,6 +9,36 @@ async function signIn(page: Page) {
   await expect(page.getByRole("heading", { name: "Overview", exact: true })).toBeVisible();
 }
 
+test("dark mode follows system preference, persists, and fits the mobile toolbar", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await signIn(page);
+  const toggle = page.getByRole("button", { name: "Dark mode", exact: true });
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator(".dashboard-main")).toHaveCSS("background-color", "rgb(24, 29, 41)");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await page.reload();
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await page.screenshot({ path: "/tmp/workspace-dark-desktop.png" });
+  await page.getByRole("button", { name: "Actions", exact: true }).click();
+  await page.getByRole("menuitem", { name: "New project", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCSS("background-color", "rgb(24, 29, 41)");
+  await page.keyboard.press("Escape");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(toggle).toBeVisible();
+  const combo = await page.locator(".view-combobox").boundingBox();
+  const button = await toggle.boundingBox();
+  expect(button!.x).toBeGreaterThanOrEqual(combo!.x + combo!.width);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/workspace-dark-mobile.png" });
+  await toggle.click();
+  await page.screenshot({ path: "/tmp/workspace-light-mobile.png" });
+});
+
 test("all dashboard views require an existing auth session", async ({ page }) => {
   for (const view of ["overview", "projects", "issues", "documents"]) {
     await page.goto(`/dashboard/views/${view}`);
@@ -145,4 +175,7 @@ test("legacy login works and invalid passwords show an accessible error", async 
   await expect(page).toHaveURL(/\/views\/overview$/);
   await page.goto("/dashboard/");
   await expect(page).toHaveURL(/\/views\/overview$/);
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/dashboard\/views\/overview$/);
+  await expect(page.getByRole("heading", { name: "Overview", exact: true })).toBeVisible();
 });

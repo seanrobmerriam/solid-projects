@@ -8,6 +8,7 @@ import { For, createEffect, createSignal, type JSX } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useWorkspace } from "./WorkspaceContext";
 import { views, viewPath } from "./data";
+import ThemeToggle from "./ThemeToggle";
 
 function ToolbarMenu(props: { label: string; children: JSX.Element }) {
   return (
@@ -78,6 +79,7 @@ export default function Toolbar() {
           </Combobox.Item>}</For>
         </Combobox.Content></Combobox.Positioner></Portal>
       </Combobox.Root>
+      <ThemeToggle />
     </ark.header>
   );
 }

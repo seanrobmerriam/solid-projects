@@ -16,6 +16,7 @@ export const querySession = query(async (pathname: string) => {
   const path = pathname.replace(/\/+$/, "") || "/";
   const isSignIn = path === "/login" || path === "/dashboard";
   const { data } = await getSession();
+  if (path === "/" && data.id) throw redirect("/dashboard");
   if (isSignIn && data.id) throw redirect("/dashboard/views/overview");
   if (data.id) return { id: data.id, email: data.email ?? "" };
   if (!isSignIn && isProtected(path)) {

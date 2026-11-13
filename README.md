@@ -4,11 +4,11 @@ An authenticated project workspace built with SolidStart and Ark UI. The dashboa
 
 ## Run locally
 
-Requires Node.js 24 or newer and Bun (or pnpm).
+Requires Bun 1.4.3 (pinned in `.bun-version`). Bun runs the tooling and production server.
 
 ```sh
 bun install
-bun run dev
+bun --bun run dev
 ```
 
 Open `/dashboard`. The existing email/password authentication creates an account the first time an email is used, and checks the password for returning users. Successful sign-in opens `/dashboard/views/overview`. The legacy `/login` entry still works.
@@ -44,12 +44,18 @@ The layout-scoped [workspace context](src/components/dashboard/WorkspaceContext.
 ## Verify
 
 ```sh
-bun run check
-bun run build
-bunx playwright install chromium
-bun run test
+bun --bun run check
+bun --bun run test:ci
+bun --bun run build
+bun --bun run test:smoke
+bunx --bun playwright install chromium
+bun --bun run test
 ```
 
 [Playwright tests](tests/dashboard.spec.ts) cover route protection, login/logout, all navigation controls, persistence of the shell, filtering and empty states, record creation, keyboard interaction, view titles, browser history, and mobile navigation. The test server uses port 3010 and a local `example.test` account in the existing auth storage. Discord's external provider flow requires real credentials and is not automated.
 
 Type checking keeps strict application checks enabled. A [public API declaration](src/types/start-oauth.d.ts) provides types for the existing source-distributed OAuth package, whose unrelated GitHub provider contains implicit-any errors. Library declaration checking is skipped because some dependencies ship invalid declarations and optional adapter types.
+
+## CI/CD
+
+[GitHub Actions](.github/workflows/ci.yml) validates PRs and `main`. Once configured, successful main runs deploy through Dokploy Cloud using Railpack. See [DEPLOYMENT.md](DEPLOYMENT.md) for the GitHub environment, API secret, source branch, domain, storage, and activation steps. Deployment stays disabled until the repository variable `DEPLOY_ENABLED` is `true`.

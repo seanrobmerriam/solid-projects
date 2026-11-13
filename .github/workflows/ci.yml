@@ -1,0 +1,121 @@
+name: CI and deploy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      inspect_dokploy:
+        description: Inspect Dokploy configuration without deploying
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    name: Inspect Dokploy
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.inspect_dokploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: production
+    env:
+      DOKPLOY_URL: ${{ vars.DOKPLOY_URL || 'https://app.dokploy.com' }}
+      DOKPLOY_APPLICATION_ID: ${{ vars.DOKPLOY_APPLICATION_ID || 'solidprojects-frontend-sb6wn2' }}
+      DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
+      APP_URL: ${{ vars.APP_URL || 'https://solid.typesayfe.com' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - run: bun scripts/deploy.mjs --inspect
+
+  validate:
+    name: Validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    concurrency:
+      group: validate-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+    env:
+      CI: 'true'
+      SESSION_SECRET: ci-only-session-secret-not-for-production-1234567890
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - run: bun install --frozen-lockfile
+      - run: bun --bun run check
+      - run: bun --bun run test:ci
+      - run: bun --bun run build
+      - run: bun --bun run test:smoke
+      - run: bunx --bun playwright install --with-deps chromium
+      - run: bun --bun run test
+      - name: Upload browser reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  deploy:
+    name: Deploy production
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !inputs.inspect_dokploy && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    environment:
+      name: production
+      url: ${{ vars.APP_URL || 'https://solid.typesayfe.com' }}
+    concurrency:
+      group: production-deployment
+      cancel-in-progress: false
+    env:
+      DOKPLOY_URL: ${{ vars.DOKPLOY_URL || 'https://app.dokploy.com' }}
+      DOKPLOY_APPLICATION_ID: ${{ vars.DOKPLOY_APPLICATION_ID || 'solidprojects-frontend-sb6wn2' }}
+      DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
+      APP_URL: ${{ vars.APP_URL || 'https://solid.typesayfe.com' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - name: Promote tested commit
+        id: promote
+        shell: bash
+        run: |
+          set -euo pipefail
+          for key in DOKPLOY_URL DOKPLOY_APPLICATION_ID DOKPLOY_API_KEY APP_URL; do
+            if [[ -z "${!key}" ]]; then
+              echo "Missing deployment setting: $key" >&2
+              exit 1
+            fi
+          done
+          git fetch origin main
+          if [[ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]]; then
+            echo "Skipping superseded main commit"
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          bun scripts/deploy.mjs --preflight
+          git push origin "$GITHUB_SHA:refs/heads/production"
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+      - name: Deploy and verify
+        if: steps.promote.outputs.deploy == 'true'
+        run: bun scripts/deploy.mjs

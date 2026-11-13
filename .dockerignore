@@ -1,0 +1,13 @@
+.git
+.github
+.env
+.env.*
+.data
+node_modules
+.output
+.vinxi
+test-results
+playwright-report
+docs
+*.log
+.DS_Store

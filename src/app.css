@@ -72,6 +72,7 @@ main:not(.dashboard-main):not(.signin-page) h1 {
   --dark-success-surface: #223d34;
   --dark-warning-surface: #413625;
   --dark-line: #343c50;
+  --dark-progress: #999bff;
 }
 :root[data-theme="dark"] .button.primary { background: #686bdc; border-color: #686bdc; }
 :root[data-theme="dark"] .button.primary:hover { background: #787be9; }

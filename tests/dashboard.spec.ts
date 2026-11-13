@@ -1,5 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
 
+test("Discord authorization uses the configured public HTTPS origin", async ({ request }) => {
+  const response = await request.get("/api/oauth/discord?fallback=%2Fdashboard", { maxRedirects: 0 });
+  expect(response.status()).toBe(302);
+  const authorization = new URL(response.headers().location);
+  expect(authorization.origin).toBe("https://discord.com");
+  expect(authorization.searchParams.get("redirect_uri")).toBe("https://workspace.example.test/api/oauth/discord");
+  expect(authorization.searchParams.get("state")).toBeTruthy();
+});
+
 async function signIn(page: Page) {
   await page.goto("/dashboard");
   await page.getByLabel("Email", { exact: true }).fill("dashboard-e2e@example.test");
@@ -19,6 +28,7 @@ test("dark mode follows system preference, persists, and fits the mobile toolbar
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
   await page.reload();
+  await expect(toggle).toBeEnabled();
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
   await toggle.focus();
   await page.keyboard.press("Enter");
@@ -29,6 +39,7 @@ test("dark mode follows system preference, persists, and fits the mobile toolbar
   await expect(page.getByRole("dialog")).toHaveCSS("background-color", "rgb(24, 29, 41)");
   await page.keyboard.press("Escape");
   await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator(".sidebar")).toHaveCSS("transform", "matrix(1, 0, 0, 1, -250, 0)");
   await expect(toggle).toBeVisible();
   const combo = await page.locator(".view-combobox").boundingBox();
   const button = await toggle.boundingBox();

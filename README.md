@@ -15,6 +15,8 @@ Open `/dashboard`. The existing email/password authentication creates an account
 
 Set `SESSION_SECRET` to a long random value in `.env.local`. For the existing Discord OAuth sign-in, also configure `DISCORD_ID` and `DISCORD_SECRET`, with a Discord callback URL of `http://localhost:3000/api/oauth/discord`. These credentials remain on the server.
 
+For production behind a TLS-terminating reverse proxy, set the server environment variable `OAUTH_ORIGIN=https://solid.typesayfe.com`. Register `https://solid.typesayfe.com/api/oauth/discord` in the same Discord application's OAuth2 redirects. The explicit origin keeps both authorization and token exchange on the public HTTPS callback even when the internal request uses HTTP. Leave `OAUTH_ORIGIN` unset locally to use the incoming development URL.
+
 ## Dashboard
 
 | Route | Content |

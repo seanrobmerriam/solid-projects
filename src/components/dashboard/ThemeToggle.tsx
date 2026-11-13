@@ -4,6 +4,7 @@ import { Show, createSignal, onCleanup, onMount } from "solid-js";
 
 export default function ThemeToggle() {
   const [dark, setDark] = createSignal(false);
+  const [ready, setReady] = createSignal(false);
   let preference: string | null = null;
   onMount(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
@@ -13,6 +14,7 @@ export default function ThemeToggle() {
       document.documentElement.dataset.theme = value ? "dark" : "light";
     };
     apply(preference === "dark" || (preference !== "light" && media.matches));
+    setReady(true);
     const systemChanged = () => { if (!preference) apply(media.matches); };
     const storageChanged = (event: StorageEvent) => {
       if (event.key !== "workspace-theme" && event.key !== null) return;
@@ -33,7 +35,7 @@ export default function ThemeToggle() {
     preference = value ? "dark" : "light";
     try { localStorage.setItem("workspace-theme", preference); } catch {}
   };
-  return <ark.button type="button" class="icon-button theme-toggle" aria-label="Dark mode" aria-pressed={dark()} title={dark() ? "Switch to light mode" : "Switch to dark mode"} onClick={toggle}>
+  return <ark.button type="button" class="icon-button theme-toggle" disabled={!ready()} aria-label="Dark mode" aria-pressed={dark()} title={dark() ? "Switch to light mode" : "Switch to dark mode"} onClick={toggle}>
     <Show when={dark()} fallback={<Moon size={17} />}><Sun size={17} /></Show>
   </ark.button>;
 }

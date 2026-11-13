@@ -32,12 +32,18 @@ export async function deploy(config, {
   if (!application) {
     const projects = await api("GET", "project.all", {});
     const matches = new Set();
+    const projectIds = new Set();
     function visit(value) {
       if (!value || typeof value !== "object") return;
       if (value.appName === config.applicationId && typeof value.applicationId === "string") matches.add(value.applicationId);
+      if (typeof value.projectId === "string") projectIds.add(value.projectId);
       for (const child of Object.values(value)) visit(child);
     }
     visit(projects);
+    if (matches.size === 0) {
+      // The summary endpoint omits appName on current Dokploy versions.
+      for (const projectId of projectIds) visit(await api("GET", "project.one", { projectId }));
+    }
     if (matches.size !== 1) throw new Error("Could not uniquely resolve the Dokploy app name; use its API applicationId");
     applicationId = [...matches][0];
     application = await api("GET", "application.one", { applicationId });

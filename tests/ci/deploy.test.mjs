@@ -62,6 +62,18 @@ describe("Dokploy deployment gate", () => {
     await deploy({ ...config, applicationId: "appName" }, io);
     expect(JSON.parse(io.calls.find(c => c.url.includes("application.deploy")).body).applicationId).toBe("actual-id");
   });
+  test("resolves app names when project.all omits appName", async () => {
+    const io = fixture(["done"]);
+    const original = io.fetcher;
+    io.fetcher = async (url, options) => {
+      if (String(url).includes("application.one") && String(url).includes("appName")) return new Response("not found", { status: 404 });
+      if (String(url).includes("project.all")) return Response.json([{ projectId: "project", environments: [{ applications: [{ applicationId: "actual-id", name: "Frontend" }] }] }]);
+      if (String(url).includes("project.one")) return Response.json({ projectId: "project", environments: [{ applications: [{ applicationId: "actual-id", appName: "appName" }] }] });
+      return original(url, options);
+    };
+    await deploy({ ...config, applicationId: "appName" }, io);
+    expect(JSON.parse(io.calls.find(c => c.url.includes("application.deploy")).body).applicationId).toBe("actual-id");
+  });
   test("waits for the matching deployment before checking health", async () => {
     const io = fixture();
     await deploy(config, io);

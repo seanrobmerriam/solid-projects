@@ -52,7 +52,7 @@ The workflow already defaults to your Dokploy Cloud address, app name and public
 | Variable | Value |
 | --- | --- |
 | `DOKPLOY_URL` | `https://app.dokploy.com` |
-| `DOKPLOY_APPLICATION_ID` | Actual API application ID, or `solidprojects-frontend-sb6wn2` |
+| `DOKPLOY_APPLICATION_ID` | `ZnW2adA8fTgCAMGlXs0D2` (verified API application ID) |
 | `APP_URL` | `https://solid.typesayfe.com` |
 
 Then add a **repository-level** Actions variable `DEPLOY_ENABLED` with value `true`. Keep it absent or `false` until setup is complete. It must be repository-level because the deployment job's condition is evaluated before environment variables are available.
@@ -70,6 +70,8 @@ This stores the key in GitHub; you do not need to share it in chat or put it on 
 ## First release and recovery
 
 To inspect Dokploy without deploying, run **CI and deploy** manually on `main` with **Inspect Dokploy configuration without deploying** selected. This prints selected non-secret settings and checks whether required environment keys exist. It never prints their values and skips deployment even if `DEPLOY_ENABLED` is true.
+
+After the checked `production` branch exists, the separate **Configure the production source branch and pinned Railpack without deploying** option sets the source branch, disables Auto Deploy, and pins Railpack to 0.43.0. It verifies the application belongs to this repository and has no unfinished deployment. It preserves domain, environment values, and storage, and does not restart the app. Manual inspection/configuration skips the validation and deployment jobs; ordinary main pushes still run full validation.
 
 Push the workflow, let validation pass, finish the above configuration, then run **CI and deploy** manually on `main`, or merge a checked PR. Watch **Deploy production** and the corresponding Dokploy deployment. A successful API request alone does not complete the job.
 

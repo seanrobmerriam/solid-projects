@@ -60,6 +60,24 @@ export async function deploy(config, {
     }, null, 2));
     return;
   }
+  if (config.configure) {
+    if (!config.repository || `${application.owner}/${application.repository}` !== config.repository) {
+      throw new Error("Dokploy repository does not match this workflow repository");
+    }
+    const deployments = await api("GET", "deployment.all", { applicationId });
+    if (!Array.isArray(deployments) || deployments.some(deployment => !["done", "error", "cancelled"].includes(deployment.status))) {
+      throw new Error("Cannot configure Dokploy while a deployment is unfinished");
+    }
+    await api("POST", "application.update", {
+      applicationId, branch: "production", autoDeploy: false, triggerType: "push",
+      buildType: "railpack", railpackVersion: "0.43.0"
+    });
+    const saved = await api("GET", "application.one", { applicationId });
+    if (saved.branch !== "production" || saved.autoDeploy !== false || saved.buildType !== "railpack" || saved.railpackVersion !== "0.43.0") {
+      throw new Error("Dokploy did not retain the requested configuration");
+    }
+    return;
+  }
   if (application.branch !== "production" || application.autoDeploy !== false || application.buildType !== "railpack") {
     throw new Error("Dokploy must use the production branch, Railpack, and Auto Deploy disabled");
   }
@@ -104,9 +122,11 @@ if (import.meta.main) {
       sha: process.env.GITHUB_SHA,
       preflight: process.argv.includes("--preflight"),
       inspect: process.argv.includes("--inspect"),
+      configure: process.argv.includes("--configure"), repository: process.env.GITHUB_REPOSITORY,
       runId: `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`
     });
-    console.log(process.argv.includes("--inspect") ? "Dokploy inspection completed; no deployment requested" :
+    console.log(process.argv.includes("--configure") ? "Dokploy production branch and Railpack configured; no deployment requested" :
+      process.argv.includes("--inspect") ? "Dokploy inspection completed; no deployment requested" :
       process.argv.includes("--preflight") ? "Dokploy configuration and queue checks passed" :
       "Dokploy deployment completed and public health check passed");
   } catch (error) {

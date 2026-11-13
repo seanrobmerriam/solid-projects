@@ -10,14 +10,18 @@ on:
         description: Inspect Dokploy configuration without deploying
         type: boolean
         default: false
+      configure_dokploy:
+        description: Configure the production source branch and pinned Railpack without deploying
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   inspect:
-    name: Inspect Dokploy
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.inspect_dokploy
+    name: Dokploy setup
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && (inputs.inspect_dokploy || inputs.configure_dokploy)
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     environment: production
@@ -26,6 +30,7 @@ jobs:
       DOKPLOY_APPLICATION_ID: ${{ vars.DOKPLOY_APPLICATION_ID || 'solidprojects-frontend-sb6wn2' }}
       DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
       APP_URL: ${{ vars.APP_URL || 'https://solid.typesayfe.com' }}
+      CONFIGURE_DOKPLOY: ${{ inputs.configure_dokploy }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,10 +38,18 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: .bun-version
-      - run: bun scripts/deploy.mjs --inspect
+      - name: Inspect or configure without deploying
+        run: |
+          if [ "$CONFIGURE_DOKPLOY" = "true" ]; then
+            git ls-remote --exit-code origin refs/heads/production
+            bun scripts/deploy.mjs --configure
+          else
+            bun scripts/deploy.mjs --inspect
+          fi
 
   validate:
     name: Validate
+    if: github.event_name != 'workflow_dispatch' || (!inputs.inspect_dokploy && !inputs.configure_dokploy)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     concurrency:
@@ -73,7 +86,7 @@ jobs:
   deploy:
     name: Deploy production
     needs: validate
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !inputs.inspect_dokploy && vars.DEPLOY_ENABLED == 'true'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !inputs.inspect_dokploy && !inputs.configure_dokploy && vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:

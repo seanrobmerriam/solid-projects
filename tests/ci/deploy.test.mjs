@@ -25,6 +25,27 @@ function fixture(statuses = ["running", "done"], overrides = {}) {
 }
 
 describe("Dokploy deployment gate", () => {
+  test("configuration updates only deployment settings and verifies them without deploying", async () => {
+    const io = fixture(["done"], { owner: "owner", repository: "repo", railpackVersion: "0.43.0" });
+    const original = io.fetcher;
+    io.fetcher = async (url, options) => {
+      if (String(url).includes("application.update")) {
+        io.calls.push({ url: String(url), ...options });
+        return Response.json({});
+      }
+      return original(url, options);
+    };
+    await deploy({ ...config, configure: true, repository: "owner/repo" }, io);
+    const update = JSON.parse(io.calls.find(c => c.url.includes("application.update")).body);
+    expect(update).toEqual({ applicationId: "app", branch: "production", autoDeploy: false, triggerType: "push", buildType: "railpack", railpackVersion: "0.43.0" });
+    expect(io.calls.some(c => c.url.includes("application.deploy"))).toBe(false);
+    expect(io.calls.filter(c => c.url.includes("application.one"))).toHaveLength(2);
+  });
+  test("configuration refuses to modify an app connected to another repository", async () => {
+    const io = fixture(["done"], { owner: "other", repository: "repo" });
+    await expect(deploy({ ...config, configure: true, repository: "owner/repo" }, io)).rejects.toThrow("repository");
+    expect(io.calls).toHaveLength(1);
+  });
   test("inspection prints presence of required keys without values or a deployment", async () => {
     const io = fixture(["done"], { branch: "main", env: "SESSION_SECRET=private-value\nDISCORD_SECRET=private-discord" });
     const output = [];

@@ -1,22 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
+import { signIn, accountEmail, testPassword } from "./helpers/auth";
 
-test("Discord authorization uses the configured public HTTPS origin", async ({ request }) => {
-  const response = await request.get("/api/oauth/discord?fallback=%2Fdashboard", { maxRedirects: 0 });
-  expect(response.status()).toBe(302);
-  const authorization = new URL(response.headers().location);
-  expect(authorization.origin).toBe("https://discord.com");
-  expect(authorization.searchParams.get("redirect_uri")).toBe("https://workspace.example.test/api/oauth/discord");
-  expect(authorization.searchParams.get("state")).toBeTruthy();
-});
-
-async function signIn(page: Page) {
+test("sign-in offers managed Neon email and GitHub authentication", async ({ page }) => {
   await page.goto("/dashboard");
-  await page.getByLabel("Email", { exact: true }).fill("dashboard-e2e@example.test");
-  await page.getByLabel("Password", { exact: true }).fill("dashboard-e2e-password");
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page).toHaveURL(/\/dashboard\/views\/overview$/);
-  await expect(page.getByRole("heading", { name: "Overview", exact: true })).toBeVisible();
-}
+  await expect(page.getByRole("button", { name: "Sign in with GitHub" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create a new account" })).toBeVisible();
+});
 
 test("dark mode follows system preference, persists, and fits the mobile toolbar", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
@@ -175,13 +164,13 @@ test("legacy login works and invalid passwords show an accessible error", async 
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard\/?$/);
   await page.goto("/login");
-  await page.getByLabel("Email", { exact: true }).fill("dashboard-e2e@example.test");
+  await page.getByLabel("Email", { exact: true }).fill(await accountEmail(page));
   await page.getByLabel("Password", { exact: true }).fill("incorrect-password");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page.getByRole("alert")).toHaveText("Invalid email or password");
-  await expect(page.getByLabel("Email", { exact: true })).toHaveValue("dashboard-e2e@example.test");
+  await expect(page.getByRole("alert")).toContainText("Invalid email or password");
+  await expect(page.getByLabel("Email", { exact: true })).toHaveValue(await accountEmail(page));
   await expect(page).toHaveURL(/\/login$/);
-  await page.getByLabel("Password", { exact: true }).fill("dashboard-e2e-password");
+  await page.getByLabel("Password", { exact: true }).fill(testPassword);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page).toHaveURL(/\/views\/overview$/);
   await page.goto("/dashboard/");

@@ -1,61 +1,67 @@
 # Solid + Ark UI workspace
 
-An authenticated project workspace built with SolidStart and Ark UI. The dashboard includes Overview, Projects, Issues, and Documents, a persistent sidebar and toolbar, searchable listboxes, and dialogs for viewing and creating sample records.
+An authenticated project workspace built with SolidStart 2, SolidJS, Ark UI, and Bun. Overview, Projects, Issues, and Documents share a persistent sidebar and toolbar, searchable listboxes, creation dialogs, and document attachments. Neon supplies managed authentication, persistent Postgres metadata, private Object Storage, Realtime updates, and a summary Function.
 
 ## Run locally
 
-Requires Bun 1.4.3 (pinned in `.bun-version`). Bun runs the tooling and production server.
+Requires Bun 1.4.3, pinned in `.bun-version`, and access to the configured Neon project. Run commands from this application directory.
 
 ```sh
-bun install
+bun install --frozen-lockfile
+bunx --bun neon@9.4.0 checkout dev --create
+bunx --bun neon@9.4.0 deploy --env .env.local
+bun --bun run db:migrate
 bun --bun run dev
 ```
 
-Open `/dashboard`. The existing email/password authentication creates an account the first time an email is used, and checks the password for returning users. Successful sign-in opens `/dashboard/views/overview`. The legacy `/login` entry still works.
+Use an isolated development branch rather than the production database. The Neon CLI must already be authenticated and linked to the intended project; see [NEON_MIGRATION.md](NEON_MIGRATION.md) for project identity, environment requirements, and migration details. Neon pulls branch credentials into ignored `.env.local`. Add `NEON_AUTH_COOKIE_SECRET` with at least 32 characters and `APP_ORIGIN=http://localhost:3000` to that local file. Never commit credentials.
 
-Set `SESSION_SECRET` to a long random value in `.env.local`. For the existing Discord OAuth sign-in, also configure `DISCORD_ID` and `DISCORD_SECRET`, with a Discord callback URL of `http://localhost:3000/api/oauth/discord`. These credentials remain on the server.
-
-For production behind a TLS-terminating reverse proxy, set the server environment variable `OAUTH_ORIGIN=https://solid.typesayfe.com`. Register `https://solid.typesayfe.com/api/oauth/discord` in the same Discord application's OAuth2 redirects. The explicit origin keeps both authorization and token exchange on the public HTTPS callback even when the internal request uses HTTP. Leave `OAUTH_ORIGIN` unset locally to use the incoming development URL.
+Open `/dashboard`. Use **Create a new account** for explicit email/password registration, then sign in. Existing local filesystem accounts and sessions are not imported automatically. GitHub replaces the previous Discord provider; GitHub sign-in also requires provider configuration in Neon Console. The external OAuth flow still needs a manual end-to-end check. Successful authentication opens `/dashboard/views/overview`; `/login` remains supported.
 
 ## Dashboard
 
 | Route | Content |
 | --- | --- |
-| `/dashboard` | Sign-in page; signed-in users go to Overview |
+| `/dashboard` | Sign-in page; authenticated users go to Overview |
 | `/dashboard/views/overview` | Current issues above all projects |
 | `/dashboard/views/projects` | Project summary and All Projects list |
 | `/dashboard/views/issues` | Issue summary and All Issues list |
 | `/dashboard/views/documents` | Document summary and All Documents list |
 
-Every dashboard view requires the existing server session, including direct navigation and reloads. Sidebar links, the Views menu, and the view combobox update nested routes while keeping the shell mounted. Projects, Issues, and Documents expand in the sidebar to reveal their records.
+Every dashboard view and workspace API verifies the managed server session, including direct requests and reloads. Sidebar links, the Views menu, and the view combobox navigate through Solid Router while keeping the workspace shell mounted. Projects, Issues, and Documents expand in the sidebar.
 
-Every collection uses Ark UI Listbox with `useListCollection` and its `filter` function. Search matches titles, descriptions, references, statuses, owners, project names, and metadata. Clear searches from the search field or Edit → Clear filters. Use the arrow keys to navigate a focused list and Enter to open details.
+Collections use Ark UI Listbox with `useListCollection` filtering. Search matches titles, descriptions, references, statuses, owners, project names, and metadata. Searches ignore letter case and surrounding whitespace. Clear searches from the field or Edit → Clear filters. Arrow keys navigate focused lists; Enter opens details and Escape closes dialogs.
 
-The `+ Project`, `+ Issue`, and `+ Document` buttons (also available in Actions) add records to the current workspace. **Mock additions and filters survive view navigation but reset on reload.** The application uses Ark UI for interactive primitives and its element factory for ordinary buttons, headings, and layout elements.
+The `+ Project`, `+ Issue`, and `+ Document` buttons save records to the authenticated user's workspace. Records persist after reload, and Realtime delivers committed updates to other open sessions for that workspace. Filters stay local to the mounted layout and reset on reload. Document creation accepts an optional attachment up to 10 MiB; uploaded files can be downloaded from document details through an authorized attachment endpoint.
 
-## Mock collections
+## Seed data and persistence
 
-- [projects.json](src/data/projects.json): 12 projects with owners, progress, status, due dates, and references.
-- [issues.json](src/data/issues.json): 36 issues with priorities, statuses, owners, and project relationships.
-- [documents.json](src/data/documents.json): 50 documents with authors, project relationships, file types, sizes, versions, dates, statuses, and tags.
+Each new account receives a personal workspace seeded from [projects.json](src/data/projects.json) (12 projects), [issues.json](src/data/issues.json) (36 issues), and [documents.json](src/data/documents.json) (50 document metadata records). Seeded documents do not include uploaded file bytes. These files establish the initial dataset; live collections are loaded from Postgres, with no mock fallback when the backend fails.
 
-The layout-scoped [workspace context](src/components/dashboard/WorkspaceContext.tsx) owns local changes. There is no new database or external service dependency. The original auth storage remains in the ignored `.data/` directory.
+Membership checks scope database queries, file access, sealed live queries, and the summary Function to the current user. The layout-scoped [workspace context](src/components/dashboard/WorkspaceContext.tsx) owns browser state and disposes subscriptions and timers when unmounted. See [NEON_MIGRATION.md](NEON_MIGRATION.md) for the service boundaries and migration procedure.
 
 ## Verify
 
 ```sh
 bun --bun run check
 bun --bun run test:ci
+bun --bun run test:backend
 bun --bun run build
 bun --bun run test:smoke
 bunx --bun playwright install chromium
 bun --bun run test
 ```
 
-[Playwright tests](tests/dashboard.spec.ts) cover route protection, login/logout, all navigation controls, persistence of the shell, filtering and empty states, record creation, keyboard interaction, view titles, browser history, and mobile navigation. The test server uses port 3010 and a local `example.test` account in the existing auth storage. Discord's external provider flow requires real credentials and is not automated.
+The full [Playwright suite](tests/dashboard.spec.ts) requires an isolated Neon environment with all services enabled and the application schema migrated. Its server uses port 3010. Coverage includes authentication, route protection, shell/navigation behavior, filtering, dialogs, keyboard and mobile interactions, persistent records, private attachment bytes, cross-user isolation, and live updates across token renewal. Allow more than 65 seconds for the renewal integration case. GitHub's external OAuth flow is not automated.
 
-Type checking keeps strict application checks enabled. A [public API declaration](src/types/start-oauth.d.ts) provides types for the existing source-distributed OAuth package, whose unrelated GitHub provider contains implicit-any errors. Library declaration checking is skipped because some dependencies ship invalid declarations and optional adapter types.
+To serve a production build with Bun:
+
+```sh
+bun .output/server/index.mjs
+```
 
 ## CI/CD
 
-[GitHub Actions](.github/workflows/ci.yml) validates PRs and `main`. Once configured, successful main runs deploy through Dokploy Cloud using Railpack. See [DEPLOYMENT.md](DEPLOYMENT.md) for the GitHub environment, API secret, source branch, domain, storage, and activation steps. Deployment stays disabled until the repository variable `DEPLOY_ENABLED` is `true`.
+[GitHub Actions](.github/workflows/ci.yml) runs type checking, CI/backend tests, build and smoke checks. With the repository's scoped `NEON_API_KEY` secret, it creates a disposable `ci-<run>-<attempt>` Neon branch from the protected empty `ci-template`, provisions services, migrates the schema, and runs the full browser suite. Cleanup deletes the branch; a 24-hour expiry covers interrupted runs. Public fork runs without that secret execute public-route browser checks instead.
+
+Production Dokploy redeployment remains disabled until explicitly enabled with `DEPLOY_ENABLED=true`. Provisioning Neon does not synchronize the application's production runtime environment or redeploy the app. See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment controls and [NEON_MIGRATION.md](NEON_MIGRATION.md) for the required runtime configuration.

@@ -1,85 +1,49 @@
-import { redirect } from "@solidjs/router";
-import { useSession } from "@solidjs/start/http";
-import { getRandomValues, subtle, timingSafeEqual } from "crypto";
-import { createUser, findUser } from "./db";
+import { createAuthServer, extractNeonAuthCookies, serializeSetCookie } from "@neondatabase/auth/server";
+import { getRequestEvent } from "solid-js/web";
 
-export interface Session {
-  id: number;
-  email: string;
+export interface Session { id: string; email: string }
+
+export function authConfig() {
+  const baseUrl = process.env.NEON_AUTH_BASE_URL;
+  const cookieSecret = process.env.NEON_AUTH_COOKIE_SECRET;
+  if (!baseUrl || !cookieSecret || cookieSecret.length < 32) {
+    throw new Error("Neon Auth is not configured. Set NEON_AUTH_BASE_URL and NEON_AUTH_COOKIE_SECRET.");
+  }
+  return { baseUrl, cookieSecret, sessionDataTtl: 30, sameSite: "lax" as const };
 }
 
-const SESSION_COOKIE_NAME = "solid_start_auth_session";
-
-export const getSession = () =>
-  useSession<Session>({
-    name: SESSION_COOKIE_NAME,
-    password: process.env.SESSION_SECRET ?? "default_password_which_should_be_long_enough",
-    cookie: {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production"
+export function getAuth(request?: Request) {
+  return createAuthServer({
+    ...authConfig(),
+    context: () => {
+      const event = getRequestEvent();
+      const current = request ?? event?.request;
+      if (!current) throw new Error("Authentication requires a request");
+      return {
+        getCookies: () => extractNeonAuthCookies(current.headers.get("cookie") ?? ""),
+        getHeader: name => current.headers.get(name),
+        getOrigin: () => current.headers.get("origin") ?? process.env.APP_ORIGIN ?? new URL(current.url).origin,
+        getFramework: () => "solid-start",
+        setCookie: (name, value, options) => {
+          if (!event) throw new Error("Authentication cookies require an active server response");
+          event.response.headers.append("Set-Cookie", serializeSetCookie({ name, value, ...options }));
+        }
+      };
     }
   });
+}
 
-export async function createSession(user: Session, redirectTo?: string) {
-  const validDest = redirectTo?.[0] === "/" && redirectTo[1] !== "/";
-  const session = await getSession();
-  await session.update(user);
-  return redirect(validDest ? redirectTo : "/dashboard/views/overview", {
-    revalidate: "session"
+export async function getSession(request?: Request): Promise<Session | null> {
+  if (!process.env.NEON_AUTH_BASE_URL) return null;
+  const { data, error } = await getAuth(request).getSession();
+  if (error) throw new Error("Unable to verify your session. Please try again.");
+  return data?.user ? { id: data.user.id, email: data.user.email } : null;
+}
+
+export async function requireUser(request?: Request): Promise<Session> {
+  const user = await getSession(request);
+  if (!user) throw new Response(JSON.stringify({ error: "Sign in to continue" }), {
+    status: 401, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" }
   });
-}
-
-async function createHash(password: string) {
-  const salt = getRandomValues(new Uint8Array(16));
-  const saltHex = Buffer.from(salt).toString("hex");
-  const key = await subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      salt,
-      iterations: 100_000,
-      hash: "SHA-512"
-    },
-    await subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, [
-      "deriveBits"
-    ]),
-    512
-  );
-  const hash = Buffer.from(key).toString("hex");
-  return `${saltHex}:${hash}`;
-}
-
-async function checkPassword(storedPassword: string, providedPassword: string) {
-  const [storedSalt, storedHash] = storedPassword.split(":");
-  if (!storedSalt || !storedHash) throw new Error("Invalid stored password format");
-  const key = await subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      salt: Buffer.from(storedSalt, "hex"),
-      iterations: 100_000,
-      hash: "SHA-512"
-    },
-    await subtle.importKey("raw", new TextEncoder().encode(providedPassword), "PBKDF2", false, [
-      "deriveBits"
-    ]),
-    512
-  );
-  const hash = Buffer.from(key);
-  const stored = Buffer.from(storedHash, "hex");
-  if (stored.length !== hash.length || !timingSafeEqual(stored, hash))
-    throw new Error("Invalid email or password");
-}
-
-export async function passwordLogin(email: string, password: string) {
-  let user = await findUser({ email });
-  if (!user)
-    user = await createUser({
-      email,
-      password: await createHash(password)
-    });
-  else if (!user.password)
-    throw new Error("Account exists via OAuth. Sign in with your OAuth provider");
-  else await checkPassword(user.password, password);
-  return createSession(user);
+  return user;
 }

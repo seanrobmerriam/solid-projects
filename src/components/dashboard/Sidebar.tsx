@@ -6,6 +6,7 @@ import { A, useLocation, useNavigate } from "@solidjs/router";
 import { ChevronRight, CircleDot, FileText, FolderKanban, LayoutDashboard, Layers, LogOut, X } from "lucide-solid";
 import { For, Show, createSignal, onCleanup, onMount } from "solid-js";
 import { useAuth } from "~/components/Context";
+import { getAuthClient } from "~/auth/client";
 import { useWorkspace } from "./WorkspaceContext";
 import { views, viewPath, type CollectionKind, type View } from "./data";
 
@@ -14,6 +15,7 @@ const icons = { overview: LayoutDashboard, projects: FolderKanban, issues: Circl
 export default function Sidebar() {
   const workspace = useWorkspace();
   const { session, logout } = useAuth();
+  const [logoutError, setLogoutError] = createSignal("");
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = createSignal(false);
@@ -100,7 +102,16 @@ export default function Sidebar() {
         <ark.div class="sidebar-account">
           <Avatar.Root class="avatar"><Avatar.Fallback>{session()?.email?.slice(0, 2).toUpperCase()}</Avatar.Fallback></Avatar.Root>
           <ark.div class="account-info"><ark.strong>My account</ark.strong><ark.span title={session()?.email}>{session()?.email}</ark.span></ark.div>
-          <ark.form action={logout} method="post"><ark.button type="submit" class="icon-button" aria-label="Sign out" title="Sign out"><LogOut size={17} /></ark.button></ark.form>
+          <ark.form action={logout} method="post" onSubmit={async event => {
+            event.preventDefault();
+            setLogoutError("");
+            try {
+              const { error } = await getAuthClient().signOut();
+              if (error) throw new Error("Unable to sign out. Please try again.");
+              window.location.assign("/dashboard");
+            } catch (error) { setLogoutError(error instanceof Error ? error.message : "Unable to sign out."); }
+          }}><ark.button type="submit" class="icon-button" aria-label="Sign out" title="Sign out"><LogOut size={17} /></ark.button></ark.form>
+          <Show when={logoutError()}><ark.span role="alert" class="form-error">{logoutError()}</ark.span></Show>
         </ark.div>
       </ark.aside>
     </>

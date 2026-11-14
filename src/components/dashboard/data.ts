@@ -19,6 +19,8 @@ export interface WorkspaceItem {
   dueDate?: string;
   priority?: string;
   fileType?: string;
+  hasFile?: boolean;
+  filename?: string;
   size?: number;
   version?: string;
   createdAt?: string;
@@ -37,7 +39,7 @@ export const viewPath = (view: View) => `/dashboard/views/${view}`;
 export const formatDate = (date: string) => new Intl.DateTimeFormat("en", {
   month: "short", day: "numeric", timeZone: "UTC",
 }).format(new Date(`${date}T12:00:00Z`));
-export const formatSize = (bytes: number) => bytes >= 1024 * 1024
+export const formatSize = (bytes: number) => bytes < 1024 ? `${bytes} B` : bytes >= 1024 * 1024
   ? `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   : `${Math.round(bytes / 1024)} KB`;
 export const statusTone = (status: string) => {

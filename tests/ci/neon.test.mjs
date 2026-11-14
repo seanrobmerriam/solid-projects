@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { validateCiTarget, verifyEmptyDatabase } from "../../scripts/verify-ci-branch";
-import { ciBranchName, prepareNeon, cleanupNeon, ENV_FILE, PROJECT_ID, TEMPLATE_BRANCH } from "../../scripts/ci-neon.mjs";
+import { ciBranchName, prepareNeon, cleanupNeon, ENV_FILE, PROJECT_ID, TEMPLATE_BRANCH, NEON_CONFIG } from "../../scripts/ci-neon.mjs";
 
 const env = { NEON_API_KEY: "unit-key", GITHUB_RUN_ID: "12345", GITHUB_RUN_ATTEMPT: "2" };
 function fixture() {
@@ -18,7 +18,7 @@ describe("isolated Neon lifecycle", () => {
     const io = fixture(); await prepareNeon(io);
     const runs = io.calls.filter(c => c[0] === "run").map(c => c[1]);
     expect(runs[0]).toEqual(["neon", "branches", "create", "--name", "ci-12345-2", "--parent", TEMPLATE_BRANCH, "--expires-at", "2026-11-14T00:00:00.000Z", "--no-secrets", "--project-id", PROJECT_ID]);
-    expect(runs[1]).toEqual(["neon", "deploy", "--branch", "ci-12345-2", "--project-id", PROJECT_ID, "--no-env-pull", "--update-existing"]);
+    expect(runs[1]).toEqual(["neon", "deploy", "--branch", "ci-12345-2", "--project-id", PROJECT_ID, "--config", NEON_CONFIG, "--no-env-pull", "--update-existing"]);
     expect(runs.at(-1)).toEqual(["bun", "--env-file=" + ENV_FILE, "scripts/verify-ci-branch.ts", "ci-12345-2"]);
     expect(runs.flat()).not.toContain("production");
     expect(runs.flat()).not.toContain(env.NEON_API_KEY);

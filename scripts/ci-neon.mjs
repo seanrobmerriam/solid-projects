@@ -1,9 +1,11 @@
 import { appendFile, chmod, rm } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
+import { fileURLToPath } from "node:url";
 
 export const PROJECT_ID = "patient-waterfall-66314702";
 export const TEMPLATE_BRANCH = "ci-template";
 export const ENV_FILE = ".env.neon-ci.local";
+export const NEON_CONFIG = fileURLToPath(new URL("../neon.ts", import.meta.url));
 
 export function ciBranchName(env = process.env) {
   if (!/^[1-9]\d*$/.test(env.GITHUB_RUN_ID ?? "") || !/^[1-9]\d*$/.test(env.GITHUB_RUN_ATTEMPT ?? "")) {
@@ -37,9 +39,9 @@ export async function prepareNeon({ env = process.env, run = execute, append = a
   const expires = new Date(now().getTime() + 24 * 60 * 60 * 1000).toISOString();
   console.log("Creating isolated Neon branch " + branch + " from the empty CI template");
   await run(["neon", "branches", "create", "--name", branch, "--parent", TEMPLATE_BRANCH, "--expires-at", expires, "--no-secrets", ...project]);
-  await run(["neon", "deploy", "--branch", branch, ...project, "--no-env-pull", "--update-existing"]);
+  await run(["neon", "deploy", "--branch", branch, ...project, "--config", NEON_CONFIG, "--no-env-pull", "--update-existing"]);
   await remove(ENV_FILE, { force: true });
-  await run(["neon", "env", "pull", "--branch", branch, ...project, "--file", ENV_FILE,
+  await run(["neon", "env", "pull", "--branch", branch, ...project, "--config", NEON_CONFIG, "--file", ENV_FILE,
     "--service", "postgres", "--service", "auth", "--service", "object-storage", "--service", "functions", "--service", "realtime"]);
   await secure(ENV_FILE, 0o600);
   await append(ENV_FILE, "\nNEON_AUTH_COOKIE_SECRET=" + cookieSecret() + "\nAPP_ORIGIN=http://localhost:3010\n");

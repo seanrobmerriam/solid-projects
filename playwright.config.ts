@@ -10,6 +10,7 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     env: {
+      MINIMAX_API_KEY: "",
       OAUTH_ORIGIN: "https://workspace.example.test", DISCORD_ID: "test-discord-client", DISCORD_SECRET: "test-discord-secret",
       ...(process.env.CI ? {
         NODE_ENV: "production", HOST: "127.0.0.1", PORT: "3010",

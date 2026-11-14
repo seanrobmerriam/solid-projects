@@ -1,0 +1,35 @@
+[
+  {
+    "id": "agents-1",
+    "title": "Planning assistant",
+    "description": "Help the team with planning assistant.",
+    "status": "Active",
+    "owner": "Team workspace",
+    "updatedAt": "2026-11-14",
+    "tags": [
+      "Sample"
+    ]
+  },
+  {
+    "id": "agents-2",
+    "title": "Issue triage assistant",
+    "description": "Help the team with issue triage assistant.",
+    "status": "Idle",
+    "owner": "Team workspace",
+    "updatedAt": "2026-11-14",
+    "tags": [
+      "Sample"
+    ]
+  },
+  {
+    "id": "agents-3",
+    "title": "Documentation assistant",
+    "description": "Help the team with documentation assistant.",
+    "status": "Active",
+    "owner": "Team workspace",
+    "updatedAt": "2026-11-14",
+    "tags": [
+      "Sample"
+    ]
+  }
+]

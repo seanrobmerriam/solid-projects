@@ -2,7 +2,7 @@ import { Field } from "@ark-ui/solid/field";
 import { ark } from "@ark-ui/solid/factory";
 import { useSubmission } from "@solidjs/router";
 import { GitBranch, Layers } from "lucide-solid";
-import { Show, createSignal } from "solid-js";
+import { Show, createSignal, onMount } from "solid-js";
 import { formLogin, formSignup } from "~/auth";
 import { getAuthClient } from "~/auth/client";
 
@@ -12,6 +12,8 @@ export default function SignIn() {
   const [creating, setCreating] = createSignal(false);
   const [socialError, setSocialError] = createSignal("");
   const [socialPending, setSocialPending] = createSignal(false);
+  const [ready, setReady] = createSignal(false);
+  onMount(() => setReady(true));
   const submission = () => creating() ? signup : login;
 
   async function githubLogin() {
@@ -38,29 +40,29 @@ export default function SignIn() {
           <Show when={creating()}>
             <Field.Root required>
               <Field.Label>Name</Field.Label>
-              <Field.Input name="name" autocomplete="name" maxLength={100} />
+              <Field.Input disabled={!ready()} name="name" autocomplete="name" maxLength={100} />
             </Field.Root>
           </Show>
           <Field.Root required>
             <Field.Label>Email</Field.Label>
-            <Field.Input name="email" type="email" autocomplete="email" placeholder="you@company.com" />
+            <Field.Input disabled={!ready()} name="email" type="email" autocomplete="email" placeholder="you@company.com" />
           </Field.Root>
           <Field.Root required>
             <Field.Label>Password</Field.Label>
-            <Field.Input name="password" type="password" autocomplete={creating() ? "new-password" : "current-password"} placeholder="Enter your password" minLength={8} maxLength={128} />
+            <Field.Input disabled={!ready()} name="password" type="password" autocomplete={creating() ? "new-password" : "current-password"} placeholder="Enter your password" minLength={8} maxLength={128} />
           </Field.Root>
-          <ark.button type="submit" class="button primary signin-submit" disabled={submission().pending}>
+          <ark.button type="submit" class="button primary signin-submit" disabled={!ready() || submission().pending}>
             {submission().pending ? "Please wait…" : creating() ? "Create account" : "Sign in"}
           </ark.button>
           <Show when={submission().error} keyed>
             {error => <ark.p class="form-error" role="alert">{error.message || "Unable to authenticate. Please try again."}</ark.p>}
           </Show>
         </ark.form>
-        <ark.button type="button" class="button oauth-button" onClick={() => setCreating(!creating())}>
+        <ark.button type="button" disabled={!ready()} class="button oauth-button" onClick={() => setCreating(!creating())}>
           {creating() ? "Already have an account? Sign in" : "Create a new account"}
         </ark.button>
         <ark.div class="signin-divider"><ark.span>Or continue with</ark.span></ark.div>
-        <ark.button type="button" onClick={githubLogin} disabled={socialPending()} class="button oauth-button">
+        <ark.button type="button" onClick={githubLogin} disabled={!ready() || socialPending()} class="button oauth-button">
           <GitBranch size={18} /> {socialPending() ? "Connecting…" : "Sign in with GitHub"}
         </ark.button>
         <Show when={socialError()}><ark.p class="form-error" role="alert">{socialError()}</ark.p></Show>

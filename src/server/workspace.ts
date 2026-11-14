@@ -1,5 +1,7 @@
-import { initialCollections, type CollectionKind, type WorkspaceItem } from "~/components/dashboard/data";
+import { initialCollections, type SavedCollectionKind as CollectionKind, type WorkspaceItem } from "~/components/dashboard/data";
+import { ensureProjectDirectory, removeNewProjectDirectory } from "./agents/files";
 import { getPool } from "./db";
+import { appOrigin } from "./origin";
 import { MAX_FILE_BYTES, uploadDocument, deleteDocument } from "./storage";
 import type { WorkspaceRow } from "./realtime";
 
@@ -13,12 +15,11 @@ export function verifyPageUser(request: Request, userId: string) {
 export function verifyMutationOrigin(request: Request) {
   const origin = request.headers.get("origin");
   const configured = process.env.APP_ORIGIN;
-  if (!configured || !origin || origin !== new URL(configured).origin) {
+  if (!configured || !origin || origin !== appOrigin(request, configured)) {
     throw new WorkspaceError(403, "Request origin is not allowed");
   }
 }
-export async function readCreationForm(request: Request) {
-  const max = MAX_FILE_BYTES + 64 * 1024;
+export async function readCreationForm(request: Request, max = MAX_FILE_BYTES + 64 * 1024) {
   if (Number(request.headers.get("content-length")) > max) throw new WorkspaceError(413, "Upload is too large");
   if (!request.body) throw new WorkspaceError(400, "Send a multipart form");
   const reader = request.body.getReader();
@@ -82,32 +83,58 @@ export async function ensureWorkspace(userId: string) {
 export async function readCollections(userId: string, workspaceId: string) {
   const result = await getPool().query<WorkspaceRow>(`SELECT i.workspace_id,i.id,i.kind,i.data FROM workspace_items i
     JOIN workspace_members m ON m.workspace_id=i.workspace_id WHERE m.user_id=$1 AND i.workspace_id=$2 ORDER BY i.created_at DESC,i.id`, [userId, workspaceId]);
-  const collections: Record<CollectionKind, WorkspaceItem[]> = { projects: [], issues: [], documents: [] };
+  const collections: Record<CollectionKind, WorkspaceItem[]> = { projects: [], issues: [], documents: [], tasks: [] };
   for (const row of result.rows) collections[row.kind].push(row.data);
   return collections;
 }
 export async function createItem(user: { id: string; email: string }, workspaceId: string, form: FormData) {
   const { kind, title, description, file } = validateCreation(form);
+  const requestId = form.get("requestId");
+  if (requestId !== null && (typeof requestId !== "string" || !/^[a-f0-9-]{36}$/i.test(requestId))) throw new WorkspaceError(400, "Invalid submission ID");
+  const id = `${kind}-${requestId || crypto.randomUUID()}`;
+  const existing = await getPool().query<{ data: WorkspaceItem }>("SELECT data FROM workspace_items WHERE workspace_id=$1 AND id=$2", [workspaceId, id]);
+  if (existing.rows[0]) return { item: existing.rows[0].data };
+  const projectId = form.get("projectId");
+  if (kind === "issues") {
+    if (typeof projectId !== "string") throw new WorkspaceError(400, "Choose a project for this issue");
+    const project = await getPool().query("SELECT id FROM workspace_items WHERE workspace_id=$1 AND id=$2 AND kind='projects'", [workspaceId, projectId]);
+    if (!project.rows.length) throw new WorkspaceError(404, "Project not found");
+  }
   const date = new Date().toISOString().slice(0, 10);
   const item: WorkspaceItem = {
-    id: `${kind}-${crypto.randomUUID()}`, title, description, owner: user.email,
+    id, title, description, owner: user.email,
     status: kind === "projects" ? "Planning" : kind === "issues" ? "Open" : "Draft", updatedAt: date, tags: [],
     ...(kind === "projects" ? { progress: 0, code: "NEW" } : {}),
-    ...(kind === "issues" ? { priority: "Medium", code: "NEW" } : {}),
+    ...(kind === "issues" ? { priority: "Medium", code: "NEW", projectId: String(projectId), runId: crypto.randomUUID() } : {}),
     ...(kind === "documents" ? { fileType: file ? (file.name.split(".").at(-1) || "FILE").slice(0, 12).toUpperCase() : "MD", size: file?.size ?? new TextEncoder().encode(description).length, version: "1.0", createdAt: date } : {}),
   };
-  const uploaded = file ? await uploadDocument(workspaceId, file) : undefined;
-  if (uploaded) Object.assign(item, { hasFile: true, filename: uploaded.filename });
+  let uploaded: Awaited<ReturnType<typeof uploadDocument>> | undefined;
+  const client = await getPool().connect();
+  let directory: string | undefined;
+  let committed = false;
+  let commitAttempted = false;
   try {
-    const result = await getPool().query<{ txid: string }>(`INSERT INTO workspace_items(workspace_id,id,kind,data,storage_key,filename,content_type)
+    await client.query("BEGIN");
+    // Serialize repeated submissions before allocating a folder or run.
+    await client.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [workspaceId + id]);
+    const repeated = await client.query<{ data: WorkspaceItem }>("SELECT data FROM workspace_items WHERE workspace_id=$1 AND id=$2", [workspaceId, id]);
+    if (repeated.rows[0]) { await client.query("COMMIT"); committed = true; return { item: repeated.rows[0].data }; }
+    if (kind === "projects") { directory = await ensureProjectDirectory(workspaceId, id); item.projectDirectory = directory; }
+    if (file) { uploaded = await uploadDocument(workspaceId, file); Object.assign(item, { hasFile: true, filename: uploaded.filename }); }
+    const result = await client.query<{ txid: string }>(`INSERT INTO workspace_items(workspace_id,id,kind,data,storage_key,filename,content_type)
       SELECT m.workspace_id,$3,$4,$5::jsonb,$6,$7,$8 FROM workspace_members m WHERE m.user_id=$1 AND m.workspace_id=$2
       RETURNING pg_current_xact_id()::text AS txid`, [user.id, workspaceId, item.id, kind, JSON.stringify(item), uploaded?.key ?? null, uploaded?.filename ?? null, uploaded?.contentType ?? null]);
     if (!result.rows[0]) throw new WorkspaceError(403, "Workspace access is unavailable");
+    if (kind === "issues") await client.query("INSERT INTO agent_runs(id,workspace_id,project_id,issue_id,status) VALUES($1,$2,$3,$4,'Queued')", [item.runId, workspaceId, projectId, item.id]);
+    commitAttempted = true;
+    await client.query("COMMIT"); committed = true;
     return { item, txid: result.rows[0].txid };
   } catch (error) {
-    if (uploaded) await deleteDocument(uploaded.key).catch(() => console.error("Document upload compensation failed"));
+    if (!committed) await client.query("ROLLBACK");
+    if (directory && !committed && !commitAttempted) await removeNewProjectDirectory(directory).catch(() => console.error("Project folder cleanup failed"));
+    if (uploaded && !commitAttempted) await deleteDocument(uploaded.key).catch(() => console.error("Document upload compensation failed"));
     throw error;
-  }
+  } finally { client.release(); }
 }
 export async function findDocument(userId: string, id: string) {
   const result = await getPool().query<{ storage_key: string | null; filename: string | null }>(`SELECT i.storage_key,i.filename FROM workspace_items i

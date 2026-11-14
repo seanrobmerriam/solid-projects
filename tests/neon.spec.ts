@@ -50,7 +50,7 @@ test("Postgres persistence, cross-client realtime, private file bytes and Functi
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Name", { exact: true }).fill(documentTitle);
     await dialog.getByLabel("File", { exact: false }).setInputFiles({ name: "round-trip.txt", mimeType: "text/plain", buffer: bytes });
-    await dialog.getByRole("button", { name: "Create document", exact: true }).click();
+    await dialog.getByRole("button", { name: "Save", exact: true }).click();
     await expect(dialog).toHaveCount(0, { timeout: 20_000 });
     await page.getByRole("option", { name: new RegExp(documentTitle) }).click();
     const download = dialog.getByRole("link", { name: "Download file" });

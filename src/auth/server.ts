@@ -1,5 +1,6 @@
 import { createAuthServer, extractNeonAuthCookies, serializeSetCookie } from "@neondatabase/auth/server";
 import { getRequestEvent } from "solid-js/web";
+import { appOrigin } from "~/server/origin";
 
 export interface Session { id: string; email: string }
 
@@ -22,7 +23,7 @@ export function getAuth(request?: Request) {
       return {
         getCookies: () => extractNeonAuthCookies(current.headers.get("cookie") ?? ""),
         getHeader: name => current.headers.get(name),
-        getOrigin: () => current.headers.get("origin") ?? process.env.APP_ORIGIN ?? new URL(current.url).origin,
+        getOrigin: () => current.headers.get("origin") ?? appOrigin(current),
         getFramework: () => "solid-start",
         setCookie: (name, value, options) => {
           if (!event) throw new Error("Authentication cookies require an active server response");

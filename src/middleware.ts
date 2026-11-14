@@ -1,6 +1,7 @@
 import { createMiddleware } from "@solidjs/start/middleware";
 import { processAuthMiddleware } from "@neondatabase/auth/server";
 import { authConfig } from "./auth/server";
+import { appOrigin } from "./server/origin";
 
 export default createMiddleware({
   async onRequest(event) {
@@ -11,7 +12,7 @@ export default createMiddleware({
       skipRoutes: ["/auth/callback"], loginUrl: "/dashboard"
     });
     const destination = result.action === "allow"
-      ? new URL("/dashboard/views/overview", process.env.APP_ORIGIN ?? url.origin).toString()
+      ? new URL("/dashboard/views/overview", appOrigin(event.request)).toString()
       : result.redirectUrl.toString();
     const headers = new Headers({ Location: destination, "Cache-Control": "no-store" });
     for (const cookie of result.cookies ?? []) headers.append("Set-Cookie", cookie);

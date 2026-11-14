@@ -2,6 +2,21 @@
 
 An authenticated project workspace built with SolidStart 2, SolidJS, Ark UI, and Bun. Overview, Projects, Issues, and Documents share a persistent sidebar and toolbar, searchable listboxes, creation dialogs, and document attachments. Neon supplies managed authentication, persistent Postgres metadata, private Object Storage, Realtime updates, and a summary Function.
 
+## Bun monorepo
+
+The SolidStart app remains at the repository root. The Astro documentation site is a Bun workspace in `documentation/`. Install both from the root with `bun install --frozen-lockfile`; the root `bun.lock` is the only lockfile.
+
+| Root command | Runs |
+| --- | --- |
+| `bun --bun run dev` | SolidStart app |
+| `bun --bun run docs:dev` | Astro docs (default port 4321) |
+| `bun --bun run dev:all` | Both dev servers together |
+| `bun --bun run check:all` | App typecheck and Astro check |
+| `bun --bun run build:all` | App build, then docs build |
+| `bun --bun run docs:preview` | Preview the built docs site |
+
+The existing `build`, `check`, `start`, and test commands still target the app. App output stays in `.output/`; docs output is `documentation/dist/`. CI validates both projects. To add a docs dependency, run `bun add --filter documentation <package>` from the root. See [documentation/README.md](documentation/README.md) for the docs content structure.
+
 ## Run locally
 
 Requires Bun 1.4.3, pinned in `.bun-version`, and access to the configured Neon project. Run commands from this application directory.
@@ -65,3 +80,5 @@ bun .output/server/index.mjs
 [GitHub Actions](.github/workflows/ci.yml) runs type checking, CI/backend tests, build and smoke checks. With the repository's scoped `NEON_API_KEY` secret, it creates a disposable `ci-<run>-<attempt>` Neon branch from the protected empty `ci-template`, provisions services, migrates the schema, and runs the full browser suite. Cleanup deletes the branch; a 24-hour expiry covers interrupted runs. Public fork runs without that secret execute public-route browser checks instead.
 
 Production Dokploy redeployment remains disabled until explicitly enabled with `DEPLOY_ENABLED=true`. Provisioning Neon does not synchronize the application's production runtime environment or redeploy the app. See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment controls and [NEON_MIGRATION.md](NEON_MIGRATION.md) for the required runtime configuration.
+
+For the local project → issue → pi agent workflow, see [Local agents](LOCAL_AGENTS.md).

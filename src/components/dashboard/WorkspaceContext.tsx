@@ -1,20 +1,27 @@
 import { createContext, createSignal, onCleanup, onMount, useContext, type ParentProps } from "solid-js";
+import { useNavigate } from "@solidjs/router";
 import { createStore } from "solid-js/store";
 import { createRealtimeClient, type SealedLiveQuery } from "@neon/realtime/client";
-import { type CollectionKind, type WorkspaceItem } from "./data";
+import { type CollectionKind, type SavedCollectionKind, type WorkspaceItem } from "./data";
 import { useAuth } from "~/components/Context";
 
-type WorkspaceRow = { workspace_id: string; id: string; kind: CollectionKind; data: WorkspaceItem };
+type WorkspaceRow = { workspace_id: string; id: string; kind: SavedCollectionKind; data: WorkspaceItem };
 type LiveCapability = { url: string; sealedQuery: SealedLiveQuery<WorkspaceRow>; userId: string };
 type Collections = Record<CollectionKind, WorkspaceItem[]>;
 type WorkspaceSummary = { projects: number; issues: number; documents: number; files: number };
 
 function createWorkspace() {
   const { session } = useAuth();
-  const [collections, setCollections] = createStore<Collections>({ projects: [], issues: [], documents: [] });
-  const [filters, setFilters] = createStore({ projects: "", issues: "", documents: "" });
+  const navigate = useNavigate();
+  const [collections, setCollections] = createStore<Collections>({
+    projects: [], issues: [], documents: [],
+    tasks: [],
+    agents: [],
+  });
+  const [filters, setFilters] = createStore({ projects: "", issues: "", documents: "", tasks: "", agents: "" });
   const [createKind, setCreateKind] = createSignal<CollectionKind | null>(null);
   const [selected, setSelected] = createSignal<{ kind: CollectionKind; item: WorkspaceItem } | null>(null);
+  const [activeRun, setActiveRun] = createSignal<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = createSignal(false);
   const [announcement, setAnnouncement] = createSignal("");
   const [status, setStatus] = createSignal("Loading workspace…");
@@ -47,14 +54,14 @@ function createWorkspace() {
     if (response.status === 401 || response.status === 409) {
       blocked = true;
       stopLive();
-      setCollections({ projects: [], issues: [], documents: [] });
+      setCollections({ projects: [], issues: [], documents: [], tasks: [], agents: [] });
       window.location.assign("/dashboard");
       throw new Error("Your session changed. Returning to sign in…");
     }
     if (response.status === 403) {
       blocked = true;
       stopLive();
-      setCollections({ projects: [], issues: [], documents: [] });
+      setCollections({ projects: [], issues: [], documents: [], tasks: [], agents: [] });
       setReady(false);
       throw new Error("You no longer have access to this workspace.");
     }
@@ -82,7 +89,7 @@ function createWorkspace() {
     if (result.userId !== userId) {
       blocked = true;
       stopLive();
-      setCollections({ projects: [], issues: [], documents: [] });
+      setCollections({ projects: [], issues: [], documents: [], tasks: [], agents: [] });
       window.location.assign("/dashboard");
       throw new Error("Your session changed. Returning to sign in…");
     }
@@ -127,7 +134,7 @@ function createWorkspace() {
     subscription = current;
     const applySnapshot = (snapshot: ReturnType<typeof current.getSnapshot>) => {
       if (disposed || subscription !== current || snapshot.data === undefined) return;
-      const next: Collections = { projects: [], issues: [], documents: [] };
+      const next: Collections = { projects: [], issues: [], documents: [], tasks: [], agents: [] };
       for (const row of snapshot.data) {
         if (row.kind in next) next[row.kind].push(row.data);
       }
@@ -152,7 +159,7 @@ function createWorkspace() {
   onMount(async () => {
     userId = session()?.id ?? "";
     try {
-      const result = await request<{ userId: string; collections: Collections; realtime: Omit<LiveCapability, "userId"> }>("/api/workspace");
+      const result = await request<{ userId: string; collections: Record<SavedCollectionKind, WorkspaceItem[]>; realtime: Omit<LiveCapability, "userId"> }>("/api/workspace");
       if (disposed || blocked) return;
       if (userId && result.userId !== userId) {
         blocked = true;
@@ -172,11 +179,14 @@ function createWorkspace() {
   });
   onCleanup(() => { disposed = true; stopLive(); requests.abort(); });
 
-  async function addItem(kind: CollectionKind, title: string, description: string, _owner: string, file?: File) {
+  async function addItem(kind: CollectionKind, title: string, description: string, _owner: string, file?: File, options?: { projectId?: string; requestId?: string }) {
     if (!ready() || !userId || blocked) throw new Error("Wait for the workspace to finish loading.");
+    if (kind === "tasks" || kind === "agents") throw new Error("Use the default agent settings; task creation is not enabled yet.");
     const body = new FormData();
     body.set("kind", kind); body.set("title", title); body.set("description", description);
     if (file) body.set("file", file);
+    if (options?.projectId) body.set("projectId", options.projectId);
+    if (options?.requestId) body.set("requestId", options.requestId);
     const result = await request<{ item: WorkspaceItem; txid?: string }>("/api/workspace/items", { method: "POST", body });
     if (disposed || blocked) return;
     // The write is committed. Prefer the subscribed snapshot; if delivery is delayed,
@@ -188,10 +198,16 @@ function createWorkspace() {
     setCreateKind(null);
     setAnnouncement(`${title} saved to your workspace.`);
     void refreshSummary();
+    if (result.item.runId) setActiveRun(result.item.runId);
+    return result.item;
   }
 
   return {
-    collections, filters, createKind, setCreateKind, selected, setSelected, addItem,
+    collections, filters, createKind, setCreateKind, selected,
+    setSelected: (value: { kind: CollectionKind; item: WorkspaceItem } | null) => {
+      if (value?.kind === "projects") { navigate(`/dashboard/projects/${encodeURIComponent(value.item.id)}`); setSelected(null); }
+      else setSelected(value);
+    }, addItem, request, activeRun, setActiveRun, userId: () => session()?.id,
     sidebarOpen, setSidebarOpen, announcement, status, error, ready,
     savedStatus: () => {
       if (summaryUnavailable()) return "Saved workspace · summary unavailable";
@@ -199,7 +215,7 @@ function createWorkspace() {
       return counts ? `${counts.projects + counts.issues + counts.documents} saved records · ${counts.files} files` : "Saved to your workspace";
     },
     setFilter: (kind: CollectionKind, value: string) => setFilters(kind, value),
-    clearFilters: () => setFilters({ projects: "", issues: "", documents: "" }),
+    clearFilters: () => setFilters({ projects: "", issues: "", documents: "", tasks: "", agents: "" }),
   };
 }
 

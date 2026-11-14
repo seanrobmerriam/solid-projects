@@ -65,10 +65,10 @@ jobs:
         with:
           bun-version-file: .bun-version
       - run: bun install --frozen-lockfile
-      - run: bun --bun run check
+      - run: bun --bun run check:all
       - run: bun --bun run test:ci
       - run: bun --bun run test:backend
-      - run: bun --bun run build
+      - run: bun --bun run build:all
       - run: bun --bun run test:smoke
       - run: bunx --bun playwright install --with-deps chromium
       - name: Check isolated Neon credentials

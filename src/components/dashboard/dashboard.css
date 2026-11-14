@@ -207,3 +207,32 @@
   .view-combobox { width: 125px; }
   .theme-toggle { grid-column: 4; grid-row: 1; }
 }
+
+/* Local project workflow */
+.agent-indent { height: 100%; min-height: 100dvh; background: var(--bg, #fff); }
+.agent-indent-background { position: fixed; inset: 0; background: #171b27; z-index: -1; }
+.agent-drawer-positioner { position: fixed; inset: 0; display: flex; justify-content: flex-end; z-index: 100; pointer-events: none; }
+.agent-drawer { pointer-events: auto; width: min(640px, 92vw); height: 100dvh; padding: 24px; display: flex; flex-direction: column; gap: 16px; background: var(--dark-surface, #fff); color: var(--dark-text, #252938); border-left: 1px solid var(--line, #e5e8ef); box-shadow: -12px 0 40px #0002; overflow: hidden; }
+.agent-drawer .dialog-heading { margin: 0; }
+.agent-drawer-backdrop { z-index: 99; }
+.agent-output { flex: 1; min-height: 0; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 16px; border: 1px solid var(--line, #e5e8ef); border-radius: 8px; background: var(--dark-surface-subtle, #f7f8fb); font: 12px/1.7 ui-monospace, monospace; }
+.agent-run-status { font-size: 13px; color: var(--dark-muted, #70788a); }
+.agent-settings { max-width: 900px; margin: 28px; overflow-y: auto; }
+.agent-settings .create-form { margin-top: 24px; }
+.agent-instructions { font-family: ui-monospace, monospace; }
+.project-page { height: 100%; overflow: auto; }
+.project-back { font-size: 13px; color: var(--dark-muted, #70788a); }
+.project-page .page-heading { margin-top: 16px; }
+.project-page .detail-metadata { max-width: 900px; }
+.project-folder { overflow-wrap: anywhere; }
+.project-related { padding: 24px 32px; border-top: 1px solid var(--line, #e5e8ef); }
+.project-related h2 { font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.project-issue-row { display: flex; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line, #e5e8ef); }
+.project-item-button { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; text-align: left; background: none; border: 0; color: inherit; cursor: pointer; }
+.project-item-button span { white-space: pre-wrap; overflow-wrap: anywhere; }
+.project-select { padding: 10px; border: 1px solid var(--line, #e5e8ef); border-radius: 6px; background: var(--dark-surface, #fff); color: inherit; width: 100%; }
+@media (max-width: 640px) { .agent-settings { margin: 16px; } .agent-drawer { width: 100vw; padding: 16px; } .project-related { padding: 20px; } .project-issue-row { flex-wrap: wrap; } .project-item-button { flex-basis: 100%; } }
+.agent-indent-background { z-index: 0; pointer-events: none; }
+.agent-indent { position: relative; z-index: 1; transform-origin: left center; transition: transform 180ms ease, border-radius 180ms ease; }
+.agent-indent[data-active] { transform: scale(.97); border-radius: 12px; overflow: hidden; }
+@media (prefers-reduced-motion: reduce) { .agent-indent { transition: none; } }

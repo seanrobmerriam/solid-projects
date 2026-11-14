@@ -3,6 +3,7 @@ import { functionBaseUrl } from "@neon/env";
 import { requireUser, getAuth } from "~/auth/server";
 import { createItem, readCreationForm, ensureWorkspace, findDocument, readCollections, removeItem, verifyMutationOrigin, verifyPageUser, WorkspaceError } from "~/server/workspace";
 import { sealWorkspace } from "~/server/realtime";
+import { kickWorkspace } from "~/server/agents/dispatcher";
 import { downloadDocument } from "~/server/storage";
 
 const json = (value: unknown, status = 200) => Response.json(value, { status, headers: { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
@@ -27,12 +28,15 @@ async function handle({ request }: APIEvent) {
       return await downloadDocument(file.storage_key!, file.filename!);
     }
     const workspaceId = await ensureWorkspace(user.id);
+    kickWorkspace(workspaceId);
     if (request.method === "GET" && path === "") return json({ workspaceId, userId: user.id,
       collections: await readCollections(user.id, workspaceId), realtime: await sealWorkspace(user.id, workspaceId) });
     if (request.method === "GET" && path === "live") return json({ ...await sealWorkspace(user.id, workspaceId), userId: user.id });
     if (request.method === "POST" && path === "items") {
       const form = await readCreationForm(request);
-      return json(await createItem(user, workspaceId, form), 201);
+      const result = await createItem(user, workspaceId, form);
+      kickWorkspace(workspaceId);
+      return json(result, 201);
     }
     const removal = /^items\/([^/]+)$/.exec(path);
     if (request.method === "DELETE" && removal) return json(await removeItem(user.id, workspaceId, decodeURIComponent(removal[1])));

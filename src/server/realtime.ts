@@ -1,5 +1,5 @@
 import { createRealtime, rawSql } from "@neon/realtime/server";
-import type { CollectionKind, WorkspaceItem } from "~/components/dashboard/data";
+import type { SavedCollectionKind as CollectionKind, WorkspaceItem } from "~/components/dashboard/data";
 export interface WorkspaceRow {
   workspace_id: string;
   id: string;

@@ -40,7 +40,7 @@ test("dark mode follows system preference, persists, and fits the mobile toolbar
 });
 
 test("all dashboard views require an existing auth session", async ({ page }) => {
-  for (const view of ["overview", "projects", "issues", "documents"]) {
+  for (const view of ["overview", "projects", "issues", "documents", "tasks", "agents"]) {
     await page.goto(`/dashboard/views/${view}`);
     await expect(page).toHaveURL(/\/dashboard\/?$/);
     await expect(page.getByRole("heading", { name: "Sign in", exact: true })).toBeVisible();
@@ -99,12 +99,9 @@ test("mock creation, record details, sidebar children and mobile navigation work
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Name", { exact: true }).fill("Customer analytics launch");
   await dialog.getByRole("textbox", { name: /^Description/ }).fill("Coordinate the next analytics release.");
-  await dialog.getByRole("button", { name: "Create project", exact: true }).click();
-  await expect(dialog).toHaveCount(0);
-  await page.getByLabel("Filter projects").fill("Customer analytics launch");
-  await page.getByRole("option", { name: /Customer analytics launch/ }).click();
-  await expect(dialog.getByRole("heading", { name: "Customer analytics launch" })).toBeVisible();
-  await page.keyboard.press("Escape");
+  await dialog.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page).toHaveURL(/\/dashboard\/projects\/projects-/);
+  await expect(page.getByRole("heading", { name: "Customer analytics launch", exact: true })).toBeVisible();
 
   await page.getByRole("navigation", { name: "Workspace" }).getByRole("menuitem", { name: /^Projects/ }).click();
   await page.getByRole("button", { name: "Expand Projects" }).click();
@@ -146,16 +143,27 @@ test("collection buttons create records, and listboxes open details with the key
     await page.getByRole("button", { name: `+ ${label}`, exact: true }).click();
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Name", { exact: true }).fill(`New ${label} for keyboard check`);
-    await dialog.getByRole("button", { name: `Create ${label.toLowerCase()}`, exact: true }).click();
+    if (view === "issues") await dialog.getByLabel("Project", { exact: true }).selectOption({ index: 1 });
+    await dialog.getByRole("button", { name: "Save", exact: true }).click();
+    if (view === "projects") await page.getByRole("link", { name: "← All Projects" }).click();
+    if (view === "issues") {
+      await expect(page.getByRole("dialog", { name: "Agent output" })).toBeVisible();
+      await page.getByRole("button", { name: "Close agent output" }).click();
+    }
     await expect(list.getByRole("option")).toHaveCount(initialCount + 1);
     await page.getByLabel(`Filter ${view}`).fill(`New ${label} for keyboard check`);
     await expect(list.getByRole("option")).toHaveCount(1);
     await list.focus();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
-    await expect(dialog.getByRole("heading", { name: `New ${label} for keyboard check` })).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(dialog).toHaveCount(0);
+    if (view === "projects") {
+      await expect(page.getByRole("heading", { name: `New ${label} for keyboard check`, exact: true })).toBeVisible();
+      await page.getByRole("link", { name: "← All Projects" }).click();
+    } else {
+      await expect(dialog.getByRole("heading", { name: `New ${label} for keyboard check` })).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(dialog).toHaveCount(0);
+    }
   }
 });
 
@@ -178,4 +186,18 @@ test("legacy login works and invalid passwords show an accessible error", async 
   await page.goto("/");
   await expect(page).toHaveURL(/\/dashboard\/views\/overview$/);
   await expect(page.getByRole("heading", { name: "Overview", exact: true })).toBeVisible();
+});
+
+
+test("Tasks list persisted records and Agents opens the default agent settings", async ({ page }) => {
+  await signIn(page);
+  const sidebar = page.getByRole("navigation", { name: "Workspace" });
+  await sidebar.evaluate(element => element.setAttribute("data-mounted-test", "true"));
+  await sidebar.getByRole("menuitem", { name: /^Tasks/ }).click();
+  await expect(page.getByRole("listbox", { name: "All Tasks" }).getByRole("option")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "+ Task", exact: true })).toHaveCount(0);
+  await sidebar.getByRole("menuitem", { name: /^Agents/ }).click();
+  await expect(page.getByRole("heading", { name: "Default agent", exact: true })).toBeVisible();
+  await expect(page.getByLabel("instructions.md")).not.toHaveValue("");
+  await expect(sidebar).toHaveAttribute("data-mounted-test", "true");
 });

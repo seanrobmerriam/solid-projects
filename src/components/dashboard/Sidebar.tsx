@@ -3,14 +3,14 @@ import { Collapsible } from "@ark-ui/solid/collapsible";
 import { ark } from "@ark-ui/solid/factory";
 import { Menu } from "@ark-ui/solid/menu";
 import { A, useLocation, useNavigate } from "@solidjs/router";
-import { ChevronRight, CircleDot, FileText, FolderKanban, LayoutDashboard, Layers, LogOut, X } from "lucide-solid";
+import { Bot, ListTodo, ChevronRight, CircleDot, FileText, FolderKanban, LayoutDashboard, Layers, LogOut, X } from "lucide-solid";
 import { For, Show, createSignal, onCleanup, onMount } from "solid-js";
 import { useAuth } from "~/components/Context";
 import { getAuthClient } from "~/auth/client";
 import { useWorkspace } from "./WorkspaceContext";
 import { views, viewPath, type CollectionKind, type View } from "./data";
 
-const icons = { overview: LayoutDashboard, projects: FolderKanban, issues: CircleDot, documents: FileText };
+const icons = { overview: LayoutDashboard, projects: FolderKanban, issues: CircleDot, documents: FileText, tasks: ListTodo, agents: Bot };
 
 export default function Sidebar() {
   const workspace = useWorkspace();
@@ -26,7 +26,7 @@ export default function Sidebar() {
     media.addEventListener("change", update);
     onCleanup(() => media.removeEventListener("change", update));
   });
-  const isActive = (view: View) => location.pathname === viewPath(view);
+  const isActive = (view: View) => location.pathname === viewPath(view) || (view === "projects" && location.pathname.startsWith("/dashboard/projects/"));
 
   // Ark Menu uses vertical keyboard navigation by default. Keep that intent
   // on the root configuration and explicitly expose it on the menu content.
@@ -66,12 +66,12 @@ export default function Sidebar() {
                       asChild={props => <A {...props()} href={viewPath(view.value)} aria-current={isActive(view.value) ? "page" : undefined}>
                         <Icon size={18} />
                         <ark.span>{view.label}</ark.span>
-                        <Show when={view.value !== "overview"}><ark.span class="nav-count">{workspace.collections[kind()]?.length}</ark.span></Show>
+                        <Show when={view.value !== "overview" && view.value !== "agents"}><ark.span class="nav-count">{workspace.collections[kind()]?.length}</ark.span></Show>
                       </A>}
                     />
                   );
                   return (
-                    <Show when={view.value !== "overview"} fallback={link()}>
+                    <Show when={view.value !== "overview" && view.value !== "agents"} fallback={link()}>
                       <Collapsible.Root>
                         <ark.div class="sidebar-group-row">
                           {link()}
@@ -86,7 +86,7 @@ export default function Sidebar() {
                               valueText={item.title}
                               class="sidebar-child"
                               onSelect={() => workspace.setSelected({ kind: kind(), item })}
-                              asChild={props => <A {...props()} href={viewPath(view.value)}><ark.span class="child-dot" /><ark.span>{item.title}</ark.span></A>}
+                              asChild={props => <A {...props()} href={kind() === "projects" ? `/dashboard/projects/${encodeURIComponent(item.id)}` : viewPath(view.value)}><ark.span class="child-dot" /><ark.span>{item.title}</ark.span></A>}
                             />}
                           </For>
                         </Collapsible.Content>

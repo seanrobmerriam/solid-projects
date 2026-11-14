@@ -1,3 +1,4 @@
+import { useLocation, useNavigate } from "@solidjs/router";
 import { Dialog } from "@ark-ui/solid/dialog";
 import { Field } from "@ark-ui/solid/field";
 import { ark } from "@ark-ui/solid/factory";
@@ -10,6 +11,10 @@ import { formatDate, formatSize, singular, statusTone, type CollectionKind } fro
 
 function CreateForm(props: { kind: CollectionKind }) {
   const workspace = useWorkspace();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const routeProject = () => /^\/dashboard\/projects\/([^/]+)$/.exec(location.pathname)?.[1];
+  const requestId = crypto.randomUUID();
   const { session } = useAuth();
   const [error, setError] = createSignal("");
   const [pending, setPending] = createSignal(false);
@@ -28,7 +33,9 @@ function CreateForm(props: { kind: CollectionKind }) {
       setError("");
       setPending(true);
       try {
-        await workspace.addItem(props.kind, name, String(data.get("description") ?? "").trim(), session()?.email ?? "My account", file);
+        const item = await workspace.addItem(props.kind, name, String(data.get("description") ?? "").trim(), session()?.email ?? "My account", file,
+          { requestId, projectId: routeProject() || String(data.get("projectId") || "") });
+        if (item && props.kind === "projects") navigate(`/dashboard/projects/${encodeURIComponent(item.id)}`);
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : "Could not save this item. Please try again.");
       } finally { setPending(false); }
@@ -41,6 +48,9 @@ function CreateForm(props: { kind: CollectionKind }) {
         <Field.Label>Description <ark.span class="muted">(optional)</ark.span></Field.Label>
         <Field.Textarea name="description" placeholder="Add a little context for your team…" rows={4} maxLength={2000} />
       </Field.Root>
+      <Show when={props.kind === "issues" && !routeProject()}>
+        <Field.Root required><Field.Label for="issue-project">Project</Field.Label><select id="issue-project" name="projectId" required class="project-select"><option value="">Choose a project</option><For each={workspace.collections.projects}>{item => <option value={item.id}>{item.title}</option>}</For></select></Field.Root>
+      </Show>
       <Show when={props.kind === "documents"}>
         <Field.Root>
           <Field.Label>File <ark.span class="muted">(optional)</ark.span></Field.Label>
@@ -50,7 +60,7 @@ function CreateForm(props: { kind: CollectionKind }) {
       </Show>
       <Show when={error()}><ark.p class="form-error" role="alert">{error()}</ark.p></Show>
       <ark.p class="form-note">Items are saved to your workspace and available after you reload.</ark.p>
-      <ark.div class="dialog-actions"><Dialog.CloseTrigger class="button" type="button">Cancel</Dialog.CloseTrigger><ark.button class="button primary" type="submit" disabled={pending() || !workspace.ready()}><Plus size={15} />{pending() ? "Saving…" : `Create ${label()}`}</ark.button></ark.div>
+      <ark.div class="dialog-actions"><Dialog.CloseTrigger class="button" type="button">Cancel</Dialog.CloseTrigger><ark.button class="button primary" type="submit" disabled={pending() || !workspace.ready()}><Plus size={15} />{pending() ? "Saving…" : "Save"}</ark.button></ark.div>
     </ark.form>
   );
 }
@@ -89,7 +99,7 @@ export default function WorkspaceDialogs() {
               <Dialog.Description>{item.description || "No description yet."}</Dialog.Description>
               <ark.dl class="detail-metadata"><For each={metadata}>{([label, value]) => <ark.div><ark.dt>{label}</ark.dt><ark.dd>{value}</ark.dd></ark.div>}</For></ark.dl>
               <Show when={item.tags.length}><ark.div class="detail-tags"><For each={item.tags}>{tag => <ark.span class="badge neutral">{tag}</ark.span>}</For></ark.div></Show>
-              <ark.div class="dialog-actions"><Show when={selection.kind === "documents" && item.hasFile}><ark.a class="button primary" href={`/api/workspace/documents/${encodeURIComponent(item.id)}/file`} download={item.filename || ""}>Download file</ark.a></Show><Dialog.CloseTrigger class="button">Done</Dialog.CloseTrigger></ark.div>
+              <ark.div class="dialog-actions"><Show when={item.runId}><ark.button class="button primary" onClick={() => { workspace.setSelected(null); workspace.setActiveRun(item.runId!); }}>View output</ark.button></Show><Show when={selection.kind === "documents" && item.hasFile}><ark.a class="button primary" href={`/api/workspace/documents/${encodeURIComponent(item.id)}/file`} download={item.filename || ""}>Download file</ark.a></Show><Dialog.CloseTrigger class="button">Done</Dialog.CloseTrigger></ark.div>
             </Dialog.Content></Dialog.Positioner></Portal>
           </Dialog.Root>
         );

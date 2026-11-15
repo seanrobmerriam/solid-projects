@@ -16,9 +16,12 @@ function WorkspaceTitle() {
   const location = useLocation();
   const title = () => {
     const view = location.pathname.replace(/\/+$/, "").split("/").pop();
+    if (location.pathname.startsWith("/dashboard/projects/")) return "Project";
     if (view === "overview") return "Overview";
     if (view === "projects") return "All Projects";
     if (view === "issues") return "All Issues";
+    if (view === "tasks") return "All Tasks";
+    if (view === "agents") return "All Agents";
     if (view === "documents") return "All Documents";
     return "Sign in";
   };

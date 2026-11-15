@@ -1,42 +1,46 @@
 import { action, query, redirect } from "@solidjs/router";
-import { getSession, passwordLogin } from "./server";
-
-// Define routes that require being logged in
-const PROTECTED_ROUTES = ["/", "/dashboard"];
-
-const isProtected = (path: string) =>
-  PROTECTED_ROUTES.some(route =>
-    route.endsWith("/*")
-      ? path.startsWith(route.slice(0, -2))
-      : path === route || path.startsWith(route + "/")
-  );
+import { getAuth, getSession } from "./server";
 
 export const querySession = query(async (pathname: string) => {
   "use server";
   const path = pathname.replace(/\/+$/, "") || "/";
-  const isSignIn = path === "/login" || path === "/dashboard";
-  const { data } = await getSession();
-  if (path === "/" && data.id) throw redirect("/dashboard");
-  if (isSignIn && data.id) throw redirect("/dashboard/views/overview");
-  if (data.id) return { id: data.id, email: data.email ?? "" };
-  if (!isSignIn && isProtected(path)) {
-    throw redirect(path.startsWith("/dashboard/") ? "/dashboard" : "/login");
-  }
-  return null;
+  const signIn = path === "/login" || path === "/dashboard";
+  const session = await getSession();
+  if (session && (path === "/" || signIn)) throw redirect("/dashboard/views/overview");
+  if (!session && path.startsWith("/dashboard/")) throw redirect("/dashboard");
+  if (!session && path === "/") throw redirect("/login");
+  return session;
 }, "session");
 
-export const formLogin = action(async (formData: FormData) => {
+function credentials(data: FormData) {
+  const email = String(data.get("email") ?? "").trim().toLowerCase();
+  const password = String(data.get("password") ?? "");
+  if (!email || !email.includes("@") || password.length < 8 || password.length > 128) {
+    throw new Error("Enter a valid email and a password between 8 and 128 characters.");
+  }
+  return { email, password };
+}
+
+export const formLogin = action(async (data: FormData) => {
   "use server";
-  const email = formData.get("email");
-  const password = formData.get("password");
-  if (typeof email !== "string" || typeof password !== "string")
-    return new Error("Email and password are required");
-  return await passwordLogin(email.trim().toLowerCase(), password);
+  const result = await getAuth().signIn.email(credentials(data));
+  if (result.error) throw new Error("Invalid email or password, or your email needs verification.");
+  return redirect("/dashboard/views/overview", { revalidate: "session" });
+});
+
+export const formSignup = action(async (data: FormData) => {
+  "use server";
+  const name = String(data.get("name") ?? "").trim();
+  if (!name || name.length > 100) throw new Error("Enter your name (up to 100 characters).");
+  const result = await getAuth().signUp.email({ ...credentials(data), name });
+  if (result.error) throw new Error(result.error.message || "Unable to create your account.");
+  if (!result.data?.token) throw new Error("Check your email to verify your account, then sign in.");
+  return redirect("/dashboard/views/overview", { revalidate: "session" });
 });
 
 export const logout = action(async () => {
   "use server";
-  const session = await getSession();
-  await session.update({ id: undefined });
-  throw redirect("/dashboard", { revalidate: "session" });
+  const result = await getAuth().signOut();
+  if (result.error) throw new Error("Unable to sign out. Please try again.");
+  return redirect("/dashboard", { revalidate: "session" });
 });

@@ -57,7 +57,6 @@ jobs:
       cancel-in-progress: true
     env:
       CI: 'true'
-      SESSION_SECRET: ci-only-session-secret-not-for-production-1234567890
     steps:
       - uses: actions/checkout@v4
         with:
@@ -66,12 +65,46 @@ jobs:
         with:
           bun-version-file: .bun-version
       - run: bun install --frozen-lockfile
-      - run: bun --bun run check
+      - run: bun --bun run check:all
       - run: bun --bun run test:ci
-      - run: bun --bun run build
+      - run: bun --bun run test:backend
+      - run: bun --bun run build:all
       - run: bun --bun run test:smoke
       - run: bunx --bun playwright install --with-deps chromium
-      - run: bun --bun run test
+      - name: Check isolated Neon credentials
+        id: neon
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+        run: |
+          if [ -n "$NEON_API_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Neon integration skipped: NEON_API_KEY is unavailable (including public fork PRs). Running public-route browser checks."
+          fi
+      - name: Install pinned Neon CLI
+        if: steps.neon.outputs.enabled == 'true'
+        run: bun install -g neon@9.4.0
+      - name: Prepare isolated Neon branch
+        id: neon_prepare
+        if: steps.neon.outputs.enabled == 'true'
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+        run: bun scripts/ci-neon.mjs prepare
+      - name: Migrate isolated Neon schema
+        if: steps.neon.outputs.enabled == 'true'
+        run: bun --env-file=.env.neon-ci.local scripts/migrate.ts
+      - name: Run full browser integration suite
+        if: steps.neon.outputs.enabled == 'true'
+        run: bun --env-file=.env.neon-ci.local --bun run test
+      - name: Run public-route browser checks
+        if: steps.neon.outputs.enabled != 'true'
+        run: bun --bun run test --grep 'sign-in offers|all dashboard views require|health'
+      - name: Delete isolated Neon branch
+        if: ${{ always() && steps.neon_prepare.outcome != 'skipped' && steps.neon_prepare.outcome != '' }}
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+        run: bun scripts/ci-neon.mjs cleanup
       - name: Upload browser reports
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4

@@ -34,3 +34,4 @@ playwright-report/
 
 # Local planning documents
 /docs/
+.neon

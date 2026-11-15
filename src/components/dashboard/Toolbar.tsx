@@ -3,7 +3,7 @@ import { Combobox } from "@ark-ui/solid/combobox";
 import { ark } from "@ark-ui/solid/factory";
 import { Menu } from "@ark-ui/solid/menu";
 import { useLocation, useNavigate } from "@solidjs/router";
-import { Check, ChevronDown, CircleDot, Eraser, FilePlus2, FolderPlus, Menu as MenuIcon, PanelLeft } from "lucide-solid";
+import { Bot, ListTodo, Check, ChevronDown, CircleDot, Eraser, FilePlus2, FolderPlus, Menu as MenuIcon, PanelLeft } from "lucide-solid";
 import { For, createEffect, createSignal, type JSX } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useWorkspace } from "./WorkspaceContext";
@@ -23,7 +23,7 @@ export default function Toolbar() {
   const workspace = useWorkspace();
   const location = useLocation();
   const navigate = useNavigate();
-  const current = () => views.find(view => location.pathname === viewPath(view.value)) ?? views[0];
+  const current = () => location.pathname.startsWith("/dashboard/projects/") ? { value: "projects" as const, label: "Project" } : views.find(view => location.pathname === viewPath(view.value)) ?? views[0];
   const [inputValue, setInputValue] = createSignal(current().label);
   const { collection, filter } = useListCollection({
     initialItems: views,

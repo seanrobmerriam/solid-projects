@@ -1,4 +1,5 @@
 {
+  "include": ["src", "tests", "scripts", "functions", "vite.config.ts", "playwright.config.ts", "neon.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -15,7 +16,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "start-oauth": ["./src/types/start-oauth.d.ts"],
       "~/*": ["./src/*"]
     }
   }

@@ -3,12 +3,12 @@ import { Field } from "@ark-ui/solid/field";
 import { ark } from "@ark-ui/solid/factory";
 import { Listbox } from "@ark-ui/solid/listbox";
 import { Progress } from "@ark-ui/solid/progress";
-import { ArrowUpRight, CircleDot, FileText, FolderKanban, Search } from "lucide-solid";
+import { Bot, ListTodo, ArrowUpRight, CircleDot, FileText, FolderKanban, Search } from "lucide-solid";
 import { For, Show, createEffect } from "solid-js";
 import { useWorkspace } from "./WorkspaceContext";
-import { formatDate, formatSize, statusTone, type CollectionKind, type WorkspaceItem } from "./data";
+import { formatDate, formatSize, singular, statusTone, type CollectionKind, type WorkspaceItem } from "./data";
 
-const icons = { projects: FolderKanban, issues: CircleDot, documents: FileText };
+const icons = { projects: FolderKanban, issues: CircleDot, documents: FileText, tasks: ListTodo, agents: Bot };
 
 export default function CollectionPanel(props: { kind: CollectionKind; heading?: boolean; currentOnly?: boolean }) {
   const workspace = useWorkspace();
@@ -47,7 +47,7 @@ export default function CollectionPanel(props: { kind: CollectionKind; heading?:
           </Field.Root>
         </ark.div>
         <ark.div class={`collection-columns ${props.kind}-columns`} aria-hidden="true">
-          <ark.span>{props.kind === "projects" ? "Project" : props.kind === "issues" ? "Issue" : "Document"}</ark.span>
+          <ark.span>{singular[props.kind]}</ark.span>
           <ark.span>{props.kind === "documents" ? "Type" : "Status"}</ark.span>
           <ark.span>{props.kind === "projects" ? "Progress" : props.kind === "issues" ? "Priority" : "Owner"}</ark.span>
           <ark.span>Updated</ark.span><ark.span />
@@ -57,7 +57,7 @@ export default function CollectionPanel(props: { kind: CollectionKind; heading?:
             {item => <Listbox.Item item={item} class={`collection-row ${props.kind}-columns`}>
               <ark.div class="item-primary">
                 <ark.div class={`item-icon ${props.kind}`}><Icon size={17} /></ark.div>
-                <ark.div class="item-copy"><Listbox.ItemText class="item-title">{item.title}</Listbox.ItemText><ark.span class="item-subtitle">{props.kind === "projects" ? `${item.code} · ${item.owner}` : props.kind === "issues" ? `${item.code} · ${projectName(item)}` : `${projectName(item)} · ${formatSize(item.size ?? 0)}`}</ark.span></ark.div>
+                <ark.div class="item-copy"><Listbox.ItemText class="item-title">{item.title}</Listbox.ItemText><ark.span class="item-subtitle">{props.kind === "projects" ? `${item.code} · ${item.owner}` : props.kind === "issues" ? `${item.code} · ${projectName(item)}` : props.kind === "documents" ? `${projectName(item)} · ${formatSize(item.size ?? 0)}` : item.owner}</ark.span></ark.div>
               </ark.div>
               <ark.div class="item-status"><ark.span class={`badge ${statusTone(item.status)}`}>{props.kind === "documents" ? item.fileType : item.status}</ark.span></ark.div>
               <ark.div class="item-meta">

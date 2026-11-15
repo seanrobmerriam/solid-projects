@@ -1,0 +1,35 @@
+[
+  {
+    "id": "tasks-1",
+    "title": "Review project milestones",
+    "description": "Help the team with review project milestones.",
+    "status": "Open",
+    "owner": "Team workspace",
+    "updatedAt": "2026-11-14",
+    "tags": [
+      "Sample"
+    ]
+  },
+  {
+    "id": "tasks-2",
+    "title": "Prepare release checklist",
+    "description": "Help the team with prepare release checklist.",
+    "status": "In progress",
+    "owner": "Team workspace",
+    "updatedAt": "2026-11-14",
+    "tags": [
+      "Sample"
+    ]
+  },
+  {
+    "id": "tasks-3",
+    "title": "Update onboarding guide",
+    "description": "Help the team with update onboarding guide.",
+    "status": "Completed",
+    "owner": "Team workspace",
+    "updatedAt": "2026-11-14",
+    "tags": [
+      "Sample"
+    ]
+  }
+]

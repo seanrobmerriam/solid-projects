@@ -24,15 +24,18 @@ Open [Dokploy Cloud](https://app.dokploy.com/dashboard), project **SolidProjects
    NODE_ENV=production
    HOST=0.0.0.0
    PORT=3000
-   SESSION_SECRET=<long-random-secret-at-least-32-characters>
-   OAUTH_ORIGIN=https://solid.typesayfe.com
-   DISCORD_ID=<discord-client-id>
-   DISCORD_SECRET=<discord-client-secret>
+   APP_ORIGIN=https://solid.typesayfe.com
+   NEON_AUTH_COOKIE_SECRET=<random-secret-at-least-32-characters>
+   # Also inject the production branch values from neon env pull:
+   # DATABASE_URL, NEON_AUTH_BASE_URL, NEON_AUTH_JWKS_URL,
+   # AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ENDPOINT_URL_S3, AWS_REGION,
+   # NEON_REALTIME_URL, NEON_REALTIME_SECRET,
+   # NEON_BRANCH_ID, NEON_FUNCTION_HOST_SUFFIX
    ```
 
-   Set Discord's redirect URI to `https://solid.typesayfe.com/api/oauth/discord`. Never commit real values. Production secrets belong in Dokploy, not build arguments or workflow YAML.
+   Configure GitHub OAuth in Neon Auth, with `https://solid.typesayfe.com` as a trusted application origin. Never commit real values. Production secrets belong in Dokploy, not build arguments or workflow YAML. See [NEON_MIGRATION.md](NEON_MIGRATION.md) for the complete environment contract.
 
-6. Until auth is migrated to Neon, attach a persistent volume at **`/app/.data`**. The current auth store is relative to the application working directory (`/app` in Railpack). Confirm that directory in the deployed container. Back up existing users before changing storage or auth providers.
+6. The migrated application uses Neon for identity, metadata, and attachments; it does not require a local auth volume. Preserve any old `.data` backup before the first rollout. Existing local accounts/sessions are not automatically imported; registration or configured GitHub sign-in creates a managed account.
 7. Generate a Dokploy API key in your profile settings. Give it the narrowest permissions available for reading this application/deployments and deploying it. The API uses `x-api-key`; Actions calls Dokploy Cloud, which manages your dedicated server.
 
 `solidprojects-frontend-sb6wn2` may be the generated `appName`, not the API's `applicationId`. The client first tries it as an ID; on HTTP 404 it resolves an exact app-name match from `project.all`. Using the actual API ID is preferable and avoids requiring project-list access. If Cloud returns a different not-found status, set the actual ID explicitly.
@@ -79,8 +82,10 @@ If a run times out or is manually cancelled, inspect Dokploy and wait for or can
 
 For rollback, disable `DEPLOY_ENABLED`, use Dokploy's retained-image rollback, and verify `/api/health` plus sign-in. Fix/revert on `main` before re-enabling automated releases. Keep retained images in Dokploy. A failed public smoke check reports failure; it does not automatically roll back a working service.
 
-## Neon follow-up
+## Neon backend and release hold
 
-This pipeline preserves the existing password/Discord authentication and mock collections. **Neon Auth and Postgres are not integrated by this change.** That migration must preserve server-side route protection, redirect URLs and sign-out, and have an explicit decision for existing users. Store its production credentials in Dokploy and use an isolated Neon branch for integration tests; never run CI against production user data. Do not remove the auth volume until that migration is complete.
+Neon Auth, Postgres, Object Storage, Realtime and a protected summary Function are wired in this branch. CI uses disposable clones of the empty `ci-template` branch and the project-scoped `NEON_API_KEY` repository secret. Forks without credentials still run unit, build, smoke and public-route checks.
+
+Production app releases remain disabled. Before enabling `DEPLOY_ENABLED`, merge the verified code, apply migrations and `neon deploy` to production, synchronize its runtime environment to Dokploy, and verify the GitHub OAuth provider. Future changes to migrations or Function source must be applied to Neon before the corresponding app release. See [NEON_MIGRATION.md](NEON_MIGRATION.md).
 
 References: [Dokploy API deployment](https://docs.dokploy.com/docs/core/auto-deploy), [deployment status API](https://docs.dokploy.com/docs/api/deployment), [Railpack configuration](https://railpack.com/config/file/), [Bun version selection](https://railpack.com/languages/bun/).
